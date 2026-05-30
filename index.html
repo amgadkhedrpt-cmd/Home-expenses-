@@ -11,10 +11,7 @@
         body { font-family: 'Cairo', sans-serif; transition: background-color 0.3s, color 0.3s; }
     </style>
     <script>
-        // تفعيل الـ Dark Mode من خلال الـ Tailwind
-        tailwind.config = {
-            darkMode: 'class',
-        }
+        tailwind.config = { darkMode: 'class' }
     </script>
 </head>
 <body class="bg-gray-100 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen p-4 md:p-6">
@@ -30,7 +27,7 @@
                 <i class="fa-solid fa-chart-pie text-blue-600 dark:text-blue-400"></i>
                 لوحة التحكم والداشبورد الذكي للمنزل
             </h1>
-            <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm">نظام مستدام تفاعلي مع وضع داكن مريح وحساب متطور للأوفر تايم</p>
+            <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm">نظام مستدام تفاعلي لإدارة المصاريف، السلف، وسداد الرواتب مع ميزة الحذف الذكي</p>
         </div>
 
         <div class="grid grid-cols-2 gap-4 mb-6 bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-gray-200 dark:border-slate-600">
@@ -45,42 +42,34 @@
             <div>
                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">اختر الشهر:</label>
                 <select id="monthFilter" class="w-full p-2.5 border border-gray-300 dark:border-slate-500 rounded-lg bg-white dark:bg-slate-700 font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500" onchange="updateDashboard()">
-                    <option value="يناير">يناير</option>
-                    <option value="فبراير">فبراير</option>
-                    <option value="مارس">مارس</option>
                     <option value="أبريل">أبريل</option>
                     <option value="مايو" selected>مايو</option>
                     <option value="يونيو">يونيو</option>
                     <option value="يوليو">يوليو</option>
-                    <option value="أغسطس">أغسطس</option>
-                    <option value="سبتمبر">سبتمبر</option>
-                    <option value="أكتوبر">أكتوبر</option>
-                    <option value="نوفمبر">نوفمبر</option>
-                    <option value="ديسمبر">ديسمبر</option>
                 </select>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-gray-200 dark:border-slate-600 text-center shadow-sm">
+            <div class="bg-white p-4 dark:bg-slate-700 rounded-xl border border-gray-200 dark:border-slate-600 text-center shadow-sm">
                 <div class="w-9 h-9 bg-yellow-50 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-2 text-yellow-600 dark:text-yellow-400">
                     <i class="fa-solid fa-share-from-square"></i>
                 </div>
-                <p class="text-[11px] font-bold text-gray-400 uppercase">رصيد مرحل من الشهر السابق</p>
+                <p class="text-[11px] font-bold text-gray-400 uppercase">رصيد مرحل سابق</p>
                 <p id="prevCarryover" class="text-lg font-bold text-slate-800 dark:text-white mt-1">0 ج.م</p>
             </div>
-            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-gray-200 dark:border-slate-600 text-center shadow-sm">
+            <div class="bg-white p-4 dark:bg-slate-700 rounded-xl border border-gray-200 dark:border-slate-600 text-center shadow-sm">
                 <div class="w-9 h-9 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-2 text-blue-600 dark:text-blue-400">
                     <i class="fa-solid fa-arrow-down-long"></i>
                 </div>
-                <p class="text-[11px] font-bold text-gray-400 uppercase">استلام جديد (الشهر الحالي)</p>
+                <p class="text-[11px] font-bold text-gray-400 uppercase">استلام جديد بالخزنة</p>
                 <p id="totalIncome" class="text-lg font-bold text-slate-800 dark:text-white mt-1">0 ج.م</p>
             </div>
-            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-gray-200 dark:border-slate-600 text-center shadow-sm">
+            <div class="bg-white p-4 dark:bg-slate-700 rounded-xl border border-gray-200 dark:border-slate-600 text-center shadow-sm">
                 <div class="w-9 h-9 bg-red-50 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-2 text-red-600 dark:text-red-400">
                     <i class="fa-solid fa-arrow-up-long"></i>
                 </div>
-                <p class="text-[11px] font-bold text-gray-400 uppercase">إجمالي مصاريف الشهر</p>
+                <p class="text-[11px] font-bold text-gray-400 uppercase">إجمالي المدفوعات والمصاريف</p>
                 <p id="totalExpense" class="text-lg font-bold text-red-600 dark:text-red-400 mt-1">0 ج.م</p>
             </div>
             <div id="vaultCard" class="p-4 rounded-xl border text-center shadow-sm transition-colors">
@@ -95,7 +84,7 @@
         <div class="mb-8">
             <h2 class="text-md font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
                 <i class="fa-solid fa-wallet text-green-600 dark:text-green-400"></i>
-                تصفية الرواتب وحساب العمل الإضافي (Overtime) يدوياً
+                تصفية الرواتب وحساب العمل الإضافي (Overtime)
             </h2>
             <div class="overflow-x-auto border border-gray-200 dark:border-slate-600 rounded-xl shadow-sm">
                 <table class="w-full text-center border-collapse">
@@ -135,16 +124,45 @@
         </div>
 
         <div class="bg-slate-50 dark:bg-slate-700/30 p-5 rounded-xl border border-gray-200 dark:border-slate-600 mb-6">
-            <h2 class="text-sm font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+            <h2 class="text-sm font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-plus-circle text-blue-600 dark:text-blue-400"></i>
-                إضافة حركة جديدة للسجل (مصروف / استلام / سلفة)
+                إضافة حركة جديدة للسجل (اختر نوع المعاملة من التابات بالأسفل)
             </h2>
-            <form id="transForm" onsubmit="addTransaction(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-                <input type="date" id="inputDate" class="p-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-700 focus:outline-blue-500" required>
-                <input type="text" id="inputTitle" placeholder="البند (مثال: دعاء سلف / طلبات سوق)" class="p-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-700 md:col-span-2 focus:outline-blue-500" required>
-                <input type="number" id="inputIncome" placeholder="المبلغ المستلم" class="p-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-700 focus:outline-blue-500" min="0">
-                <input type="number" id="inputExpense" placeholder="المبلغ المدفوع" class="p-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-700 focus:outline-blue-500" min="0">
-                <button type="submit" class="p-2.5 bg-blue-900 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-lg text-sm font-bold md:col-span-5 shadow-sm transition">حفظ الحركة وتحديث الداشبورد فوراُ</button>
+            
+            <div class="flex gap-2 mb-4 border-b pb-2 border-gray-200 dark:border-slate-600">
+                <button onclick="switchFormTab('expense')" id="tab-expense" class="px-4 py-2 text-xs font-bold rounded-lg bg-blue-900 text-white shadow-sm">🏠 مصروفات المنزل / استلام الخزنة</button>
+                <button onclick="switchFormTab('advance')" id="tab-advance" class="px-4 py-2 text-xs font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">💸 سلفة موظف</button>
+                <button onclick="switchFormTab('salary')" id="tab-salary" class="px-4 py-2 text-xs font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">🤝 سداد راتب صافي</button>
+            </div>
+
+            <form id="form-expense" onsubmit="addTransaction(event, 'normal')" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+                <input type="date" id="expDate" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" required>
+                <input type="text" id="expTitle" placeholder="البند (مثال: طلبات سوق / كهرباء)" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 md:col-span-2" required>
+                <input type="number" id="expIncome" placeholder="مبلغ استلام للخزنة" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" min="0">
+                <input type="number" id="expExpense" placeholder="مبلغ مصروف" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" min="0">
+                <button type="submit" class="p-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-sm font-bold md:col-span-5 shadow-sm transition">حفظ المعاملة</button>
+            </form>
+
+            <form id="form-advance" onsubmit="addTransaction(event, 'advance')" class="grid grid-cols-1 sm:grid-cols-3 gap-3 hidden">
+                <input type="date" id="advDate" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" required>
+                <select id="advStaff" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 font-bold" required>
+                    <option value="" disabled selected>اختر اسم الموظفة لمستلم السلفة</option>
+                    <option value="إيمان">إيمان</option>
+                    <option value="دعاء">دعاء</option>
+                </select>
+                <input type="number" id="advAmount" placeholder="مبلغ السلفة المدفوع" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" min="1" required>
+                <button type="submit" class="p-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-bold sm:col-span-3 shadow-sm transition">حفظ السلفة المستقطعة</button>
+            </form>
+
+            <form id="form-salary" onsubmit="addTransaction(event, 'salary')" class="grid grid-cols-1 sm:grid-cols-3 gap-3 hidden">
+                <input type="date" id="salDate" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" required>
+                <select id="salStaff" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 font-bold" required>
+                    <option value="" disabled selected>اختر اسم الموظفة المقبوضة</option>
+                    <option value="إيمان">إيمان</option>
+                    <option value="دعاء">دعاء</option>
+                </select>
+                <input type="number" id="salAmount" placeholder="المبلغ الصافي المدفوع كـ راتب" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" min="1" required>
+                <button type="submit" class="p-2.5 bg-green-700 hover:bg-green-600 text-white rounded-lg text-sm font-bold sm:col-span-3 shadow-sm transition">حفظ وإثبات سداد الراتب من الخزنة</button>
             </form>
         </div>
 
@@ -158,9 +176,10 @@
                   <thead class="bg-slate-800 dark:bg-slate-700 text-white text-xs font-bold sticky top-0">
                     <tr>
                       <th class="p-2.5">التاريخ</th>
-                      <th class="p-2.5 text-right pr-4">البيان / البند</th>
+                      <th class="p-2.5 text-right pr-4">البيان / نوع المعاملة</th>
                       <th class="p-2.5">الاستلام</th>
                       <th class="p-2.5">المدفوع</th>
+                      <th class="p-2.5">إجراء</th>
                     </tr>
                   </thead>
                   <tbody id="ledgerTableBody" class="text-xs font-medium text-gray-700 dark:text-slate-300">
@@ -171,84 +190,62 @@
     </div>
 
     <script>
-        // الترتيب الزمني للأشهر لضمان الترحيل التراكمي المظبوط
         const arabicMonths = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+        let currentFormTab = 'expense';
 
-        // مصفوفة البيانات الأساسية المدمج فيها كل الحركات المذكورة
-        let ledger = [
-            { year: 2026, month: "أبريل", date: "2026-04-19", income: 3000, title: "استلام دفعة أولى", expense: 0 },
-            { year: 2026, month: "أبريل", date: "2026-04-22", income: 3000, title: "استلام دفعة ثانية", expense: 0 },
-            { year: 2026, month: "مايو", date: "2026-05-01", income: 0, title: "لبن جهينه", expense: 65 },
-            { year: 2026, month: "مايو", date: "2026-05-01", income: 0, title: "منظفات وطباق وعيش وسكر", expense: 555 },
-            { year: 2026, month: "مايو", date: "2026-05-01", income: 0, title: "إيمان سلف", expense: 200 },
-            { year: 2026, month: "مايو", date: "2026-05-02", income: 0, title: "مترو وفراخ وموز وطماطم وخيار", expense: 390 },
-            { year: 2026, month: "مايو", date: "2026-05-03", income: 0, title: "عيش وصيدليه تامر طلبات", expense: 240 },
-            { year: 2026, month: "مايو", date: "2026-05-05", income: 0, title: "تطعيم ليلى صيدليه تامر", expense: 1200 },
-            { year: 2026, month: "مايو", date: "2026-05-08", income: 0, title: "سوبر ماركت وطلب البيت وخضار", expense: 500 },
-            { year: 2026, month: "مايو", date: "2026-05-10", income: 1000, title: "استلام مالي الخزنة", expense: 0 },
-            { year: 2026, month: "مايو", date: "2026-05-10", income: 0, title: "استلاف إيمان", expense: 800 },
-            { year: 2026, month: "مايو", date: "2026-05-11", income: 3000, title: "استلام نقدي", expense: 0 },
-            { year: 2026, month: "مايو", date: "2026-05-12", income: 2000, title: "استلام نقدي إضافي", expense: 0 },
-            { year: 2026, month: "مايو", date: "2026-05-12", income: 0, title: "فاكهه وخضار وسوبر ماركت وعيش", expense: 550 },
-            { year: 2026, month: "مايو", date: "2026-05-13", income: 3000, title: "استلام نقدي", expense: 0 },
-            { year: 2026, month: "مايو", date: "2026-05-15", income: 0, title: "دعاء سلف", expense: 200 },
-            { year: 2026, month: "مايو", date: "2026-05-16", income: 2000, title: "استلام نقدي", expense: 0 },
-            { year: 2026, month: "مايو", date: "2026-05-17", income: 3000, title: "استلام نقدي", expense: 0 },
-            { year: 2026, month: "مايو", date: "2026-05-18", income: 0, title: "سوبرماركت وطلبات المنزل", expense: 420 },
-            { year: 2026, month: "مايو", date: "2026-05-19", income: 3000, title: "استلام نقدي", expense: 0 },
-            { year: 2026, month: "مايو", date: "2026-05-20", income: 0, title: "دعاء سلفه", expense: 800 },
-            { year: 2026, month: "مايو", date: "2026-05-25", income: 3000, title: "استلام نقدي أخير", expense: 0 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "البوتوجاز", expense: 3100 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "النت", expense: 1150 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "سردين و سمك و بيبسي", expense: 400 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "أوبر شوز", expense: 1010 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "أوبر شوز كيدز مع بنطلون شورت ليلي", expense: 3450 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "فراخ بانيه", expense: 1600 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "جرح دالي", expense: 100 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "نسكافيه", expense: 150 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "بروفينما", expense: 200 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "أوبر جينز يوم ١٩", expense: 100 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "أوبر مكتبات و ٢ فراخ يوم ٢٠", expense: 740 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "أوبر هيلث و رز يوم ٢٣", expense: 320 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "أوبر طلبات يوم ٢٣", expense: 240 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "أوبر طلبات يوم ٢٤ خضار", expense: 160 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "بانيه فراخ يوم ٢٥", expense: 410 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "مترو صالون و كريمة", expense: 660 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "برجر لايت شوبر", expense: 330 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "اناناس كورية يوم ٣٠", expense: 150 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "فرد تليفزيون ٣٠", expense: 340 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "ذهاب الي المركز جيب حاجه لافيها من د", expense: 200 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "سردين و سمك يوم ٢٦", expense: 300 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "٢ فرورة بطل ٦ فرورة صودها", expense: 500 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "إ ك هـ طفاية ميكروب قيلين", expense: 200 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "دعاء إيمان قسط يومين", expense: 200 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "دعاء نفس س طين يوم المستشفى", expense: 50 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "دليفرى و صوص البرجر ومسترد خيار", expense: 300 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "فرن اللاب توب ورق", expense: 300 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "جزر", expense: 50 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "مستشفى ت يوم ٦ حواش بلدى و جوجة", expense: 180 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "بيبسي مرتين", expense: 200 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "وايبس مرتين", expense: 240 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "بيت دواء شرام كركوك بوجر و جبل و", expense: 400 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "بصل و طرشي و عتور", expense: 100 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "أبيض زينه و ناتية كير و صفير", expense: 300 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "كوت", expense: 70 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "ادوية سكريه و تمدد ت اولاده", expense: 200 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "كابري و رز بلبت", expense: 300 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "أوبر بنطلوني الأبيض و البلوزة كلمنا", expense: 1710 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "أوبر فسبت و ازار بالين المراب", expense: 470 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "زيت و رز و شعريه", expense: 200 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "شحن كهرباء", expense: 1000 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "أوبر ساره فيلا جين", expense: 550 },
-            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "تمر و لبن كريم و ايس كريم", expense: 545 }
+        // الحركات الافتراضية المفرغة كاملة
+        const defaultLedger = [
+            { year: 2026, month: "أبريل", date: "2026-04-19", income: 3000, title: "استلام دفعة أولى", expense: 0, isAdvance: false, staffName: "" },
+            { year: 2026, month: "أبريل", date: "2026-04-22", income: 3000, title: "استلام دفعة ثانية", expense: 0, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-01", income: 0, title: "لبن جهينه", expense: 65, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-01", income: 0, title: "منظفات وطباق وعيش وسكر", expense: 555, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-01", income: 0, title: "إيمان سلف", expense: 200, isAdvance: true, staffName: "إيمان" },
+            { year: 2026, month: "مايو", date: "2026-05-02", income: 0, title: "مترو وفراخ وموز وطماطم وخيار", expense: 390, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-03", income: 0, title: "عيش وصيدليه تامر طلبات", expense: 240, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-05", income: 0, title: "تطعيم ليلى صيدليه تامر", expense: 1200, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-08", income: 0, title: "سوبر ماركت وطلب البيت وخضار", expense: 500, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-10", income: 1000, title: "استلام مالي الخزنة", expense: 0, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-10", income: 0, title: "استلاف إيمان", expense: 800, isAdvance: true, staffName: "إيمان" },
+            { year: 2026, month: "مايو", date: "2026-05-11", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-12", income: 2000, title: "استلام نقدي إضافي", expense: 0, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-12", income: 0, title: "فاكهه وخضار وسوبر ماركت وعيش", expense: 550, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-13", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-15", income: 0, title: "دعاء سلف", expense: 200, isAdvance: true, staffName: "دعاء" },
+            { year: 2026, month: "مايو", date: "2026-05-16", income: 2000, title: "استلام نقدي", expense: 0, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-17", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-18", income: 0, title: "سوبرماركت وطلبات المنزل", expense: 420, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-19", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-20", income: 0, title: "دعاء سلفه", expense: 800, isAdvance: true, staffName: "دعاء" },
+            { year: 2026, month: "مايو", date: "2026-05-25", income: 3000, title: "استلام نقدي أخير", expense: 0, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "البوتوجاز", expense: 3100, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "النت", expense: 1150, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "شحن كهرباء", expense: 1000, isAdvance: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-26", income: 0, title: "أوبر شوز كيدز مع بنطلون شورت ليلي", expense: 3450, isAdvance: false, staffName: "" }
         ];
 
-        // ميزة الترحيل اللانهائي: حساب الرصيد التراكمي لكل الشهور السابقة
+        // ميزة القراءة والحفظ التلقائي في المتصفح عشان الأرقام ماتضيعش
+        let ledger = JSON.parse(localStorage.getItem('home_ledger')) || defaultLedger;
+
+        function saveAndRefresh() {
+            localStorage.setItem('home_ledger', JSON.stringify(ledger));
+            updateDashboard();
+        }
+
+        // التبديل بين تابات نماذج الإدخال للسلف والمصاريف والرواتب
+        function switchFormTab(tabName) {
+            currentFormTab = tabName;
+            ['expense', 'advance', 'salary'].forEach(t => {
+                document.getElementById('form-' + t).classList.add('hidden');
+                document.getElementById('tab-' + t).className = "px-4 py-2 text-xs font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200";
+            });
+            document.getElementById('form-' + tabName).classList.remove('hidden');
+            let themeClass = tabName === 'expense' ? 'bg-blue-900 text-white' : (tabName === 'advance' ? 'bg-red-600 text-white' : 'bg-green-700 text-white');
+            document.getElementById('tab-' + tabName).className = "px-4 py-2 text-xs font-bold rounded-lg shadow-sm " + themeClass;
+        }
+
         function getPreviousCarryover(targetYear, targetMonth) {
             let carryover = 0;
             let targetMonthIndex = arabicMonths.indexOf(targetMonth);
-
-            // تجميع الأرباح والخسائر التراكمية من كل الحركات اللي حصلت قبل الشهر الحالي
             ledger.forEach(t => {
                 let mIdx = arabicMonths.indexOf(t.month);
                 if (t.year < targetYear || (t.year === targetYear && mIdx < targetMonthIndex)) {
@@ -258,7 +255,6 @@
             return carryover;
         }
 
-        // الحسابات والتحديثات الكلية للداشبورد
         let globalImanAdvances = 0;
         let globalDoaaAdvances = 0;
 
@@ -267,7 +263,6 @@
             const month = document.getElementById('monthFilter').value;
             const filtered = ledger.filter(t => t.year === year && t.month === month);
 
-            // 1. استدعاء الفلوس الباقية والمرحلة أوتوماتيكياً
             const prevCarry = getPreviousCarryover(year, month);
             document.getElementById('prevCarryover').innerText = prevCarry.toLocaleString() + " ج.م";
 
@@ -279,12 +274,18 @@
             filtered.forEach(t => {
                 totalIncome += t.income;
                 totalExpense += t.expense;
-                const title = t.title;
-                if (title.includes("إيمان") || title.includes("ايمان")) { globalImanAdvances += t.expense; }
-                if (title.includes("دعاء") || title.includes("دهاء")) { globalDoaaAdvances += t.expense; }
+                
+                // حساب السلف بناء على التوجيه الصريح أو احتواء الاسم
+                if (t.isAdvance) {
+                    if (t.staffName === "إيمان") globalImanAdvances += t.expense;
+                    if (t.staffName === "دعاء") globalDoaaAdvances += t.expense;
+                } else if (t.title.includes("إيمان") || t.title.includes("ايمان")) {
+                    if (!t.title.includes("مرتب") && !t.title.includes("سداد")) globalImanAdvances += t.expense;
+                } else if (t.title.includes("دعاء") || t.title.includes("دهاء")) {
+                    if (!t.title.includes("مرتب") && !t.title.includes("سداد")) globalDoaaAdvances += t.expense;
+                }
             });
 
-            // الصافي الكلي للخزنة = المرحل السابق + الجديد - مصروفات الشهر
             const netVault = prevCarry + totalIncome - totalExpense;
 
             document.getElementById('totalIncome').innerText = totalIncome.toLocaleString() + " ج.م";
@@ -301,62 +302,94 @@
                 vaultIcon.className = "w-9 h-9 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-2 text-red-600 dark:text-red-400";
             }
 
-            // تشغيل حسابات القبض
             calculatePayroll();
 
-            // بناء جدول الحركات للفترة الحالية
             const tbody = document.getElementById('ledgerTableBody');
             tbody.innerHTML = '';
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-gray-400 italic dark:text-gray-500">لا توجد حركات مسجلة لهذا الشهر بعد.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-gray-400 italic dark:text-gray-500">لا توجد حركات مسجلة لهذا الشهر بعد.</td></tr>`;
             } else {
-                filtered.forEach((t, idx) => {
+                // عرض الحركات بالتاريخ والبيان مع إتاحة زرار الحذف الفوري
+                filtered.forEach((t) => {
+                    // إيجاد المعرف الأصلي في المصفوفة الكبيرة لحذفه بدقة
+                    const globalIndex = ledger.indexOf(t);
                     const row = document.createElement('tr');
-                    row.className = idx % 2 === 1 ? 'bg-gray-50 dark:bg-slate-700/50' : 'bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700';
+                    row.className = 'bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/50';
                     row.innerHTML = `
                         <td class="p-2.5 text-gray-500 dark:text-gray-400">${t.date || '---'}</td>
                         <td class="p-2.5 font-bold text-right pr-4 text-slate-700 dark:text-slate-200">${t.title}</td>
                         <td class="p-2.5 text-green-600 dark:text-green-400 font-bold">${t.income ? t.income.toLocaleString() + ' ج.م' : '-'}</td>
                         <td class="p-2.5 text-red-600 dark:text-red-400 font-bold">${t.expense ? t.expense.toLocaleString() + ' ج.م' : '-'}</td>
+                        <td class="p-2.5">
+                            <button onclick="deleteTransaction(${globalIndex})" class="text-red-500 hover:text-red-700 p-1 rounded transition" title="حذف الحركة">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </button>
+                        </td>
                     `;
                     tbody.appendChild(row);
                 });
             }
         }
 
-        // وظيفة حساب المرتبات والـ Overtime التفصيلي التفاعلي
         function calculatePayroll() {
             const imanSalary = 3600;
             const doaaSalary = 2600;
 
-            // جلب مدخلات أوفر تايم إيمان
             const imanDays = Number(document.getElementById('imanDays').value) || 0;
             const imanRate = Number(document.getElementById('imanRate').value) || 0;
             const imanOvertime = imanDays * imanRate;
             document.getElementById('imanOvertimeTotal').innerText = imanOvertime.toLocaleString() + " ج.م";
 
-            // جلب مدخلات أوفر تايم دعاء
             const doaaDays = Number(document.getElementById('doaaDays').value) || 0;
             const doaaRate = Number(document.getElementById('doaaRate').value) || 0;
             const doaaOvertime = doaaDays * doaaRate;
             document.getElementById('doaaOvertimeTotal').innerText = doaaOvertime.toLocaleString() + " ج.م";
 
-            // إظهار السلف
             document.getElementById('imanAdvances').innerText = globalImanAdvances.toLocaleString() + " ج.م";
             document.getElementById('doaaAdvances').innerText = globalDoaaAdvances.toLocaleString() + " ج.م";
 
-            // صافي القبض النهائي = (الأساسي + الإضافي) - السلف
             document.getElementById('imanNet').innerText = (imanSalary + imanOvertime - globalImanAdvances).toLocaleString() + " ج.م";
             document.getElementById('doaaNet').innerText = (doaaSalary + doaaOvertime - globalDoaaAdvances).toLocaleString() + " ج.م";
         }
 
-        function addTransaction(e) {
+        // وظيفة الحذف الفوري للحركة وإعادة حساب كل شيء في نفس اللحظة
+        function deleteTransaction(index) {
+            if (confirm("هل أنت متأكد من رغبتك في حذف هذه الحركة بالكامل؟")) {
+                ledger.splice(index, 1);
+                saveAndRefresh();
+            }
+        }
+
+        // معالجة إضافة حركات من التابات المختلفة وتوجيهها محاسبياً بشكل صحيح
+        function addTransaction(e, type) {
             e.preventDefault();
-            const dateVal = document.getElementById('inputDate').value;
-            const titleVal = document.getElementById('inputTitle').value;
-            const incomeVal = Number(document.getElementById('inputIncome').value) || 0;
-            const expenseVal = Number(document.getElementById('inputExpense').value) || 0;
+            let dateVal, titleVal, incomeVal = 0, expenseVal = 0, isAdv = false, staff = "";
+
+            if (type === 'normal') {
+                dateVal = document.getElementById('expDate').value;
+                titleVal = document.getElementById('expTitle').value;
+                incomeVal = Number(document.getElementById('expIncome').value) || 0;
+                expenseVal = Number(document.getElementById('expExpense').value) || 0;
+                document.getElementById('expTitle').value = '';
+                document.getElementById('expIncome').value = '';
+                document.getElementById('expExpense').value = '';
+            } else if (type === 'advance') {
+                dateVal = document.getElementById('advDate').value;
+                staff = document.getElementById('advStaff').value;
+                expenseVal = Number(document.getElementById('advAmount').value) || 0;
+                titleVal = `سلفة صريحة للموظفة: ${staff}`;
+                isAdv = true;
+                document.getElementById('advAmount').value = '';
+                document.getElementById('advStaff').value = '';
+            } else if (type === 'salary') {
+                dateVal = document.getElementById('salDate').value;
+                staff = document.getElementById('salStaff').value;
+                expenseVal = Number(document.getElementById('salAmount').value) || 0;
+                titleVal = `سداد صافي الراتب المستحق لـ ${staff}`;
+                document.getElementById('salAmount').value = '';
+                document.getElementById('salStaff').value = '';
+            }
 
             if (!dateVal || !titleVal) return;
 
@@ -364,15 +397,20 @@
             const year = dateObj.getFullYear();
             const month = arabicMonths[dateObj.getMonth()];
 
-            ledger.push({ year: year, month: month, date: dateVal, income: incomeVal, title: titleVal, expense: expenseVal });
+            ledger.push({
+                year: year,
+                month: month,
+                date: dateVal,
+                income: incomeVal,
+                title: titleVal,
+                expense: expenseVal,
+                isAdvance: isAdv,
+                staffName: staff
+            });
 
-            document.getElementById('inputTitle').value = '';
-            document.getElementById('inputIncome').value = '';
-            document.getElementById('inputExpense').value = '';
-            updateDashboard();
+            saveAndRefresh();
         }
 
-        // وظيفة تبديل الوضع الداكن والفاتح
         function toggleDarkMode() {
             const html = document.documentElement;
             const icon = document.getElementById('themeIcon');
