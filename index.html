@@ -18,10 +18,12 @@
 
     <div class="max-w-6xl mx-auto bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 relative">
         
+        <!-- زرار الـ Dark Mode -->
         <button onclick="toggleDarkMode()" class="absolute left-6 top-6 w-10 h-10 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-yellow-400 rounded-full flex items-center justify-center shadow-sm transition">
             <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
         </button>
 
+        <!-- العنوان الرئيسي -->
         <div class="text-center mb-8">
             <h1 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white flex justify-center items-center gap-3">
                 <i class="fa-solid fa-chart-pie text-blue-600 dark:text-blue-400"></i>
@@ -30,11 +32,13 @@
             <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm">نظام مستدام لانهائي لجميع الشهور والسنوات تلقائياً مع ترحيل تراكمي محترف</p>
         </div>
 
+        <!-- فلاتر التحكم التفاعلية اللانهائية -->
         <div class="grid grid-cols-2 gap-4 mb-6 bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-gray-200 dark:border-slate-600">
             <div>
                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">اختر السنة:</label>
                 <select id="yearFilter" class="w-full p-2.5 border border-gray-300 dark:border-slate-500 rounded-lg bg-white dark:bg-slate-700 font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500" onchange="updateDashboard()">
-                    </select>
+                    <!-- السنين بتنزل هنا لوحدها ديناميكياً -->
+                </select>
             </div>
             <div>
                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">اختر الشهر:</label>
@@ -55,6 +59,7 @@
             </div>
         </div>
 
+        <!-- كروت كشف أداء الخزنة التراكمي -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div class="bg-white p-4 dark:bg-slate-700 rounded-xl border border-gray-200 dark:border-slate-600 text-center shadow-sm">
                 <div class="w-9 h-9 bg-yellow-50 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-2 text-yellow-600 dark:text-yellow-400">
@@ -86,6 +91,7 @@
             </div>
         </div>
 
+        <!-- جدول تصفية الرواتب والـ Overtime المتطور -->
         <div class="mb-8">
             <h2 class="text-md font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
                 <i class="fa-solid fa-wallet text-green-600 dark:text-green-400"></i>
@@ -106,6 +112,7 @@
                     </tr>
                   </thead>
                   <tbody class="bg-white text-slate-700 dark:bg-slate-800 dark:text-slate-200 text-xs md:text-sm font-medium">
+                    <!-- صف إيمان -->
                     <tr class="border-b border-gray-200 dark:border-slate-600">
                       <td class="p-3 font-bold bg-gray-50 dark:bg-slate-700">إيمان</td>
                       <td class="p-2"><input type="number" id="imanBaseSalary" value="3600" min="0" class="w-24 p-1 text-center font-bold border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
@@ -116,6 +123,7 @@
                       <td id="imanPaidSalary" class="p-3 text-purple-600 dark:text-purple-400 font-bold">0 ج.م</td>
                       <td id="imanNet" class="p-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-bold">0 ج.م</td>
                     </tr>
+                    <!-- صف دعاء -->
                     <tr>
                       <td class="p-3 font-bold bg-gray-50 dark:bg-slate-700">دعاء</td>
                       <td class="p-2"><input type="number" id="doaaBaseSalary" value="2600" min="0" class="w-24 p-1 text-center font-bold border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
@@ -131,6 +139,7 @@
             </div>
         </div>
 
+        <!-- قسم إضافة الحركات الذكي -->
         <div class="bg-slate-50 p-5 dark:bg-slate-700/30 rounded-xl border border-gray-200 dark:border-slate-600 mb-6">
             <h2 class="text-sm font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-plus-circle text-blue-600 dark:text-blue-400"></i>
@@ -174,6 +183,7 @@
             </form>
         </div>
 
+        <!-- سجل الحركات المفصل -->
         <div>
             <h2 class="text-sm font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
                 <i class="fa-solid fa-list-ul text-slate-600 dark:text-slate-400"></i>
@@ -202,7 +212,7 @@
         let currentFormTab = 'expense';
         let currentSelectedYear = 2026;
 
-        // مصفوفة الاستلام الـ 5 حركات الصافية والمطلوبة بالتواريخ والمبالغ بالمليم بالظبط
+        // الحركات الخمسة المحددة والمطلوبة فقط من سيادتكم بالتواريخ والمبالغ بالملّي
         const defaultLedger = [
             { year: 2026, month: "مايو", date: "2026-05-13", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, isSalaryPayment: false, staffName: "" },
             { year: 2026, month: "مايو", date: "2026-05-16", income: 2000, title: "استلام نقدي", expense: 0, isAdvance: false, isSalaryPayment: false, staffName: "" },
@@ -211,7 +221,20 @@
             { year: 2026, month: "مايو", date: "2026-05-25", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, isSalaryPayment: false, staffName: "" }
         ];
 
-        let ledger = JSON.parse(localStorage.getItem('home_ledger')) || defaultLedger;
+        // ميزة فحص التخزين لعدم تداخل البيانات القديمة الكاش
+        let ledger;
+        if(localStorage.getItem('home_ledger')) {
+            let existing = JSON.parse(localStorage.getItem('home_ledger'));
+            // لو كان فيه بيانات تانية قديمة مخزنة، بنجبره ياخد الـ 5 حركات الصافية الجديدة فقط انطلاقاً من طلبك
+            if(existing.length > 5 && existing.some(x => x.title === "البوتوجاز")) {
+                ledger = defaultLedger;
+                localStorage.setItem('home_ledger', JSON.stringify(defaultLedger));
+            } else {
+                ledger = existing;
+            }
+        } else {
+            ledger = defaultLedger;
+        }
 
         function populateYears() {
             const yearSelect = document.getElementById('yearFilter');
@@ -236,7 +259,6 @@
             updateDashboard();
         }
 
-        // حفظ مدخلات قيم الرواتب المكتوبة يدوياً في المتصفح علشان ما تروحش بالريفريش
         function saveInputs() {
             const inputs = {
                 imanBase: document.getElementById('imanBaseSalary').value,
