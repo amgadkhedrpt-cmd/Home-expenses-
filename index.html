@@ -27,25 +27,30 @@
                 <i class="fa-solid fa-chart-pie text-blue-600 dark:text-blue-400"></i>
                 لوحة التحكم والداشبورد الذكي للمنزل
             </h1>
-            <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm">نظام مستدام تفاعلي مع رواتب أساسية قابلة للتعديل وتحديث تلقائي للسداد والسلف</p>
+            <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm">نظام مستدام لانهائي لجميع الشهور والسنوات تلقائياً مع ترحيل تراكمي محترف</p>
         </div>
 
         <div class="grid grid-cols-2 gap-4 mb-6 bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-gray-200 dark:border-slate-600">
             <div>
                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">اختر السنة:</label>
                 <select id="yearFilter" class="w-full p-2.5 border border-gray-300 dark:border-slate-500 rounded-lg bg-white dark:bg-slate-700 font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500" onchange="updateDashboard()">
-                    <option value="2026" selected>2026</option>
-                    <option value="2027">2027</option>
-                    <option value="2028">2028</option>
-                </select>
+                    </select>
             </div>
             <div>
                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">اختر الشهر:</label>
                 <select id="monthFilter" class="w-full p-2.5 border border-gray-300 dark:border-slate-500 rounded-lg bg-white dark:bg-slate-700 font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500" onchange="updateDashboard()">
+                    <option value="يناير">يناير</option>
+                    <option value="فبراير">فبراير</option>
+                    <option value="مارس">مارس</option>
                     <option value="أبريل">أبريل</option>
                     <option value="مايو" selected>مايو</option>
                     <option value="يونيو">يونيو</option>
                     <option value="يوليو">يوليو</option>
+                    <option value="أغسطس">أغسطس</option>
+                    <option value="سبتمبر">سبتمبر</option>
+                    <option value="أكتوبر">أكتوبر</option>
+                    <option value="نوفمبر">نوفمبر</option>
+                    <option value="ديسمبر">ديسمبر</option>
                 </select>
             </div>
         </div>
@@ -195,6 +200,7 @@
     <script>
         const arabicMonths = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
         let currentFormTab = 'expense';
+        let currentSelectedYear = 2026; // السنة المبدئية
 
         const defaultLedger = [
             { year: 2026, month: "أبريل", date: "2026-04-19", income: 3000, title: "استلام دفعة أولى", expense: 0, isAdvance: false, isSalaryPayment: false, staffName: "" },
@@ -227,8 +233,32 @@
 
         let ledger = JSON.parse(localStorage.getItem('home_ledger')) || defaultLedger;
 
+        // وظيفة بناء وإتاحة السنين في القائمة فوق ديناميكياً بدون حد معين
+        function populateYears() {
+            const yearSelect = document.getElementById('yearFilter');
+            const savedYear = yearSelect.value || currentSelectedYear;
+            
+            // جلب كافة السنين الفريدة الموجودة في البيانات حالياً
+            let years = [...new Set(ledger.map(t => t.year))];
+            
+            // لو البيانات فاضية أو مفهاش غير سنة حالية، نضمن وجود 2026 كحد أدنى انطلاق
+            if (!years.includes(2026)) years.push(2026);
+            years.sort((a, b) => a - b);
+
+            yearSelect.innerHTML = '';
+            years.forEach(y => {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.innerText = y;
+                if (y == savedYear) opt.selected = true;
+                yearSelect.appendChild(opt);
+            });
+            currentSelectedYear = yearSelect.value;
+        }
+
         function saveAndRefresh() {
             localStorage.setItem('home_ledger', JSON.stringify(ledger));
+            populateYears();
             updateDashboard();
         }
 
@@ -255,16 +285,15 @@
             return carryover;
         }
 
-        // متغيرات تجميع السلف والمدفوعات لكل موظف
         let globalImanAdvances = 0, globalDoaaAdvances = 0;
         let globalImanPaidSalary = 0, globalDoaaPaidSalary = 0;
 
         function updateDashboard() {
-            const year = parseInt(document.getElementById('yearFilter').value);
+            currentSelectedYear = parseInt(document.getElementById('yearFilter').value) || 2026;
             const month = document.getElementById('monthFilter').value;
-            const filtered = ledger.filter(t => t.year === year && t.month === month);
+            const filtered = ledger.filter(t => t.year === currentSelectedYear && t.month === month);
 
-            const prevCarry = getPreviousCarryover(year, month);
+            const prevCarry = getPreviousCarryover(currentSelectedYear, month);
             document.getElementById('prevCarryover').innerText = prevCarry.toLocaleString() + " ج.م";
 
             let totalIncome = 0;
@@ -277,7 +306,6 @@
                 totalIncome += t.income;
                 totalExpense += t.expense;
                 
-                // التوجيه المحاسبي التلقائي الذكي للحركات المسجلة
                 if (t.isAdvance) {
                     if (t.staffName === "إيمان") globalImanAdvances += t.expense;
                     if (t.staffName === "دعاء") globalDoaaAdvances += t.expense;
@@ -285,7 +313,6 @@
                     if (t.staffName === "إيمان") globalImanPaidSalary += t.expense;
                     if (t.staffName === "دعاء") globalDoaaPaidSalary += t.expense;
                 } else {
-                    // الأمان القديم في حال الإدخال التقليدي من البيان
                     const title = t.title;
                     if (title.includes("إيمان") || title.includes("ايمان")) {
                         if (title.includes("سلف") || title.includes("استلاف")) globalImanAdvances += t.expense;
@@ -342,11 +369,9 @@
         }
 
         function calculatePayroll() {
-            // جلب الراتب الأساسي القابل للتعديل من المدخلات مباشرة
             const imanSalary = Number(document.getElementById('imanBaseSalary').value) || 0;
             const doaaSalary = Number(document.getElementById('doaaBaseSalary').value) || 0;
 
-            // حساب الأوفر تايم
             const imanDays = Number(document.getElementById('imanDays').value) || 0;
             const imanRate = Number(document.getElementById('imanRate').value) || 0;
             const imanOvertime = imanDays * imanRate;
@@ -357,14 +382,12 @@
             const doaaOvertime = doaaDays * doaaRate;
             document.getElementById('doaaOvertimeTotal').innerText = doaaOvertime.toLocaleString() + " ج.م";
 
-            // عرض المبالغ الحالية للسلف والمدفوعات
             document.getElementById('imanAdvances').innerText = globalImanAdvances.toLocaleString() + " ج.م";
             document.getElementById('doaaAdvances').innerText = globalDoaaAdvances.toLocaleString() + " ج.م";
             
             document.getElementById('imanPaidSalary').innerText = globalImanPaidSalary.toLocaleString() + " ج.م";
             document.getElementById('doaaPaidSalary').innerText = globalDoaaPaidSalary.toLocaleString() + " ج.م";
 
-            // الصافي المتبقي المستحق للقبض = (الأساسي + الإضافي) - السلف - الراتب المدفوع مسبقاً
             document.getElementById('imanNet').innerText = (imanSalary + imanOvertime - globalImanAdvances - globalImanPaidSalary).toLocaleString() + " ج.م";
             document.getElementById('doaaNet').innerText = (doaaSalary + doaaOvertime - globalDoaaAdvances - globalDoaaPaidSalary).toLocaleString() + " ج.م";
         }
@@ -424,6 +447,10 @@
                 staffName: staff
             });
 
+            // ضبط الفلتر تلقائياً على سنة الحركة الجديدة لتبان فوراً
+            currentSelectedYear = year;
+            document.getElementById('monthFilter').value = month;
+
             saveAndRefresh();
         }
 
@@ -439,7 +466,11 @@
             }
         }
 
-        window.onload = updateDashboard;
+        // تشغيل البناء الديناميكي للسنين والداشبورد عند التحميل لأول مرة
+        window.onload = function() {
+            populateYears();
+            updateDashboard();
+        };
     </script>
 </body>
 </html>
