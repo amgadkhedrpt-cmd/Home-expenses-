@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم مصاريف المنزل والسلف</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-6">
+
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-6">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-800 flex justify-center items-center gap-3">
+                <i class="fa-solid fa-chart-pie text-blue-600"></i>
+                لوحة التحكم والداشبورد الذكي للمنزل
+            </h1>
+            <p class="text-gray-500 mt-2 text-sm">نظام مستدام لمتابعة المصاريف، الخزنة، وسلف الموظفين لكل السنوات</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-gray-200">
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">اختر السنة:</label>
+                <select id="yearFilter" class="w-full p-2.5 border border-gray-300 rounded-lg bg-white font-bold text-slate-800 focus:ring-2 focus:ring-blue-500" onchange="updateDashboard()">
+                    <option value="2026" selected>2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">اختر الشهر:</label>
+                <select id="monthFilter" class="w-full p-2.5 border border-gray-300 rounded-lg bg-white font-bold text-slate-800 focus:ring-2 focus:ring-blue-500" onchange="updateDashboard()">
+                    <option value="يناير">يناير</option>
+                    <option value="فبراير">فبراير</option>
+                    <option value="مارس">مارس</option>
+                    <option value="أبريل">أبريل</option>
+                    <option value="مايو" selected>مايو</option>
+                    <option value="يونيو">يونيو</option>
+                    <option value="يوليو">يوليو</option>
+                    <option value="أغسطس">أغسطس</option>
+                    <option value="سبتمبر">سبتمبر</option>
+                    <option value="أكتوبر">أكتوبر</option>
+                    <option value="نوفمبر">نوفمبر</option>
+                    <option value="ديسمبر">ديسمبر</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-white p-5 rounded-xl border border-gray-200 text-center shadow-sm">
+                <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-2 text-blue-600">
+                    <i class="fa-solid fa-arrow-down-long"></i>
+                </div>
+                <p class="text-xs font-bold text-gray-400 uppercase">إجمالي الاستلام (الخزنة)</p>
+                <p id="totalIncome" class="text-xl font-bold text-slate-800 mt-1">0 ج.م</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-gray-200 text-center shadow-sm">
+                <div class="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-2 text-red-600">
+                    <i class="fa-solid fa-arrow-up-long"></i>
+                </div>
+                <p class="text-xs font-bold text-gray-400 uppercase">إجمالي المصاريف والمدفوعات</p>
+                <p id="totalExpense" class="text-xl font-bold text-red-600 mt-1">0 ج.م</p>
+            </div>
+            <div id="vaultCard" class="p-5 rounded-xl border text-center shadow-sm transition-colors">
+                <div id="vaultIcon" class="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <i class="fa-solid fa-vault"></i>
+                </div>
+                <p class="text-xs font-bold text-gray-400 uppercase">صافي متبقي الخزنة</p>
+                <p id="netVault" class="text-xl font-bold mt-1">0 ج.م</p>
+            </div>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-md font-bold text-slate-800 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-wallet text-green-600"></i>
+                تصفية الرواتب والسلف الشهرية للموظفين
+            </h2>
+            <div class="overflow-x-auto border border-gray-200 rounded-xl shadow-sm">
+                <table class="w-full text-center border-collapse">
+                  <thead>
+                    <tr class="bg-green-700 text-white font-bold text-sm">
+                      <th class="p-3">اسم الموظفة</th>
+                      <th class="p-3">المرتب الأساسي</th>
+                      <th class="p-3">سلف الشهر الحالي</th>
+                      <th class="p-3">صافي القبض المستحق</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white text-sm font-medium text-slate-700">
+                    <tr class="border-b border-gray-200">
+                      <td class="p-3 font-bold bg-gray-50">إيمان</td>
+                      <td class="p-3">3,600 ج.م</td>
+                      <td id="imanAdvances" class="p-3 text-red-600 font-bold">0 ج.م</td>
+                      <td id="imanNet" class="p-3 bg-green-50 text-green-700 font-bold">0 ج.م</td>
+                    </tr>
+                    <tr>
+                      <td class="p-3 font-bold bg-gray-50">دعاء</td>
+                      <td class="p-3">2,600 ج.م</td>
+                      <td id="doaaAdvances" class="p-3 text-red-600 font-bold">0 ج.m</td>
+                      <td id="doaaNet" class="p-3 bg-green-50 text-green-700 font-bold">0 ج.م</td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="bg-slate-50 p-5 rounded-xl border border-gray-200 mb-6">
+            <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-blue-600"></i>
+                إضافة حركة جديدة للسجل (مصروف / استلام / سلفة)
+            </h2>
+            <form id="transForm" onsubmit="addTransaction(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+                <input type="date" id="inputDate" class="p-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-blue-500" required>
+                <input type="text" id="inputTitle" placeholder="البند (مثال: دعاء سلف / طلبات سوق)" class="p-2 border border-gray-300 rounded-lg text-sm bg-white md:col-span-2 focus:outline-blue-500" required>
+                <input type="number" id="inputIncome" placeholder="المبلغ المستلم" class="p-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-blue-500" min="0">
+                <input type="number" id="inputExpense" placeholder="المبلغ المدفوع" class="p-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-blue-500" min="0">
+                <button type="submit" class="p-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-sm font-bold md:col-span-5 shadow-sm transition">حفظ الحركة وتحديث الداشبورد فوراُ</button>
+            </form>
+        </div>
+
+        <div>
+            <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-list-ul text-slate-600"></i>
+                سجل الحركات التفصيلي للفترة المحددة
+            </h2>
+            <div class="overflow-x-auto border border-gray-200 rounded-xl max-h-80 shadow-sm">
+                <table class="w-full text-center border-collapse">
+                  <thead class="bg-slate-800 text-white text-xs font-bold sticky top-0">
+                    <tr>
+                      <th class="p-2.5">التاريخ</th>
+                      <th class="p-2.5 text-right pr-4">البيان / البند</th>
+                      <th class="p-2.5">الاستلام</th>
+                      <th class="p-2.5">المدفوع</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ledgerTableBody" class="text-xs font-medium text-gray-700">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // قاعدة البيانات الأولية ببياناتك الفعلية
+        let ledger = [
+            { year: 2026, month: "مايو", date: "2026-05-01", income: 0, title: "لبن وجهنه", expense: 65 },
+            { year: 2026, month: "مايو", date: "2026-05-01", income: 0, title: "منظفات وطباق وعيش وسكر", expense: 555 },
+            { year: 2026, month: "مايو", date: "2026-05-01", income: 0, title: "ايمان سلف", expense: 200 },
+            { year: 2026, month: "مايو", date: "2026-05-02", income: 0, title: "مترو وفراخ وموز وطماطم وخيار", expense: 390 },
+            { year: 2026, month: "مايو", date: "2026-05-03", income: 0, title: "عيش وصيدليه تامر طلبات", expense: 240 },
+            { year: 2026, month: "مايو", date: "2026-05-05", income: 0, title: "تطعيم ليلى صيدليه تامر", expense: 1200 },
+            { year: 2026, month: "مايو", date: "2026-05-08", income: 0, title: "سوبر ماركت وطلب البيت وخضار", expense: 500 },
+            { year: 2026, month: "مايو", date: "2026-05-10", income: 0, title: "استلاف ايمان", expense: 800 },
+            { year: 2026, month: "مايو", date: "2026-05-12", income: 0, title: "فاكهه وخضار وسوبر ماركت وعيش", expense: 550 },
+            { year: 2026, month: "مايو", date: "2026-05-15", income: 0, title: "دعاء سلف", expense: 200 },
+            { year: 2026, month: "مايو", date: "2026-05-18", income: 0, title: "سوبرماركت وطلبات المنزل", expense: 420 },
+            { year: 2026, month: "مايو", date: "2026-05-20", income: 0, title: "دعاء سلفه", expense: 800 }
+        ];
+
+        // وظيفة تحديث أرقام وجداول الداشبورد بناءً على الفلتر المختار
+        function updateDashboard() {
+            const year = parseInt(document.getElementById('yearFilter').value);
+            const month = document.getElementById('monthFilter').value;
+
+            // فلترة الحركات
+            const filtered = ledger.filter(t => t.year === year && t.month === month);
+
+            // حساب الإجماليات
+            let totalIncome = 0;
+            let totalExpense = 0;
+            let imanAdvances = 0;
+            let doaaAdvances = 0;
+
+            filtered.forEach(t => {
+                totalIncome += t.income;
+                totalExpense += t.expense;
+
+                // الفلترة الذكية لحساب سلف إيمان ودعاء (مأمنة ضد الحركات الإملائية)
+                const title = t.title;
+                if (title.includes("إيمان") || title.includes("ايمان")) {
+                    imanAdvances += t.expense;
+                }
+                if (title.includes("دعاء") || title.includes("دهاء")) {
+                    doaaAdvances += t.expense;
+                }
+            });
+
+            const netVault = totalIncome - totalExpense;
+
+            // تحديث كروت الواجهة
+            document.getElementById('totalIncome').innerText = totalIncome.toLocaleString() + " ج.م";
+            document.getElementById('totalExpense').innerText = totalExpense.toLocaleString() + " ج.م";
+            document.getElementById('netVault').innerText = netVault.toLocaleString() + " ج.م";
+
+            // تلوين كارت الخزنة بناء على الحالة المالية
+            const vaultCard = document.getElementById('vaultCard');
+            const vaultIcon = document.getElementById('vaultIcon');
+            if (netVault >= 0) {
+                vaultCard.className = "p-5 rounded-xl border text-center shadow-sm bg-green-50 border-green-200 text-green-700";
+                vaultIcon.className = "w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2 text-green-600";
+            } else {
+                vaultCard.className = "p-5 rounded-xl border text-center shadow-sm bg-red-50 border-red-200 text-red-700";
+                vaultIcon.className = "w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2 text-red-600";
+            }
+
+            // تصفية الرواتب
+            const imanSalary = 3600;
+            const doaaSalary = 2600;
+            document.getElementById('imanAdvances').innerText = imanAdvances.toLocaleString() + " ج.م";
+            document.getElementById('doaaAdvances').innerText = doaaAdvances.toLocaleString() + " ج.م";
+            document.getElementById('imanNet').innerText = (imanSalary - imanAdvances).toLocaleString() + " ج.م";
+            document.getElementById('doaaNet').innerText = (doaaSalary - doaaAdvances).toLocaleString() + " ج.م";
+
+            // بناء جدول الحركات التفصيلي لشاشة الويب
+            const tbody = document.getElementById('ledgerTableBody');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-gray-400 italic">لا توجد حركات مسجلة لهذا الشهر بعد.</td></tr>`;
+            } else {
+                filtered.forEach((t, idx) => {
+                    const row = document.createElement('tr');
+                    row.className = idx % 2 === 1 ? 'bg-gray-50' : 'bg-white border-b border-gray-100';
+                    row.innerHTML = `
+                        <td class="p-2.5 text-gray-500">${t.date || '---'}</td>
+                        <td class="p-2.5 font-bold text-right pr-4 text-slate-700">${t.title}</td>
+                        <td class="p-2.5 text-green-600 font-bold">${t.income ? t.income.toLocaleString() + ' ج.م' : '-'}</td>
+                        <td class="p-2.5 text-red-600 font-bold">${t.expense ? t.expense.toLocaleString() + ' ج.م' : '-'}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+
+        // وظيفة إضافة الحركة الجديدة للسجل التراكمي
+        function addTransaction(e) {
+            e.preventDefault();
+            const dateVal = document.getElementById('inputDate').value;
+            const titleVal = document.getElementById('inputTitle').value;
+            const incomeVal = Number(document.getElementById('inputIncome').value) || 0;
+            const expenseVal = Number(document.getElementById('inputExpense').value) || 0;
+
+            if (!dateVal || !titleVal) return;
+
+            const dateObj = new Date(dateVal);
+            const year = dateObj.getFullYear();
+            const monthsArabic = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+            const month = monthsArabic[dateObj.getMonth()];
+
+            // إضافة الحركة للمصفوفة المفتوحة
+            ledger.push({
+                year: year,
+                month: month,
+                date: dateVal,
+                income: incomeVal,
+                title: titleVal,
+                expense: expenseVal
+            });
+
+            // تصفية خانات الإدخال بعد الحفظ
+            document.getElementById('inputTitle').value = '';
+            document.getElementById('inputIncome').value = '';
+            document.getElementById('inputExpense').value = '';
+
+            // تحديث العرض تلقائياً
+            updateDashboard();
+        }
+
+        // تشغيل الداشبورد تلقائياً عند فتح الصفحة لأول مرة
+        window.onload = updateDashboard;
+    </script>
+</body>
+</html>
+
