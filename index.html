@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم مصاريف المنزل والسلف</title>
+    <title>لوحة تحكم مصاريف وعيادات BodyFix الذكية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة XLSX لتصدير ملفات الإكسيل باللغة العربية -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
         body { font-family: 'Cairo', sans-serif; transition: background-color 0.3s, color 0.3s; }
@@ -16,28 +18,27 @@
 </head>
 <body class="bg-gray-100 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen p-4 md:p-6">
 
-    <div class="max-w-6xl mx-auto bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 relative">
+    <div class="max-w-7xl mx-auto bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 relative">
         
         <!-- زرار الـ Dark Mode -->
         <button onclick="toggleDarkMode()" class="absolute left-6 top-6 w-10 h-10 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-yellow-400 rounded-full flex items-center justify-center shadow-sm transition">
             <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
         </button>
 
-        <!-- العنوان الرئيسي -->
+        <!-- العنوان الرئيسي وعلامة براند BodyFix -->
         <div class="text-center mb-8">
             <h1 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white flex justify-center items-center gap-3">
-                <i class="fa-solid fa-chart-pie text-blue-600 dark:text-blue-400"></i>
-                لوحة التحكم والداشبورد الذكي للمنزل
+                <i class="fa-solid fa-house-medical text-blue-600 dark:text-blue-400"></i>
+                لوحة التحكم الإدارية والمالية لـ BodyFix
             </h1>
-            <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm">نظام مستدام لانهائي مع تتبع أسباب الجزاءات وفلاتر ذكية متكاملة للخزنة والموظفين</p>
+            <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm">نظام مستدام لانهائي شامل تتبع السلف التراكمية، المبيت الإضافي، الأرصدة الافتتاحية القديمة، وتصدير التقارير إكسيل</p>
         </div>
 
-        <!-- فلاتر التحكم التفاعلية اللانهائية -->
-        <div class="grid grid-cols-2 gap-4 mb-6 bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-gray-200 dark:border-slate-600">
+        <!-- فلاتر التحكم التفاعلية اللانهائية + أزرار الأدوات -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-gray-200 dark:border-slate-600">
             <div>
                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">اختر السنة:</label>
                 <select id="yearFilter" class="w-full p-2.5 border border-gray-300 dark:border-slate-500 rounded-lg bg-white dark:bg-slate-700 font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500" onchange="updateDashboard()">
-                    <!-- السنين بتنزل هنا لوحدها ديناميكياً -->
                 </select>
             </div>
             <div>
@@ -57,9 +58,15 @@
                     <option value="ديسمبر">ديسمبر</option>
                 </select>
             </div>
+            <div class="flex items-end">
+                <button onclick="exportToExcel()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-2.5 rounded-lg flex items-center justify-center gap-2 shadow-md transition">
+                    <i class="fa-solid fa-file-excel text-lg"></i>
+                    تصدير كل البيانات كـ ملف Excel
+                </button>
+            </div>
         </div>
 
-        <!-- كروت كشف أداء الخزنة التراكمي -->
+        <!-- كروت كشف أداء الخزنة التراكمي المطور -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div class="bg-white p-4 dark:bg-slate-700 rounded-xl border border-gray-200 dark:border-slate-600 text-center shadow-sm">
                 <div class="w-9 h-9 bg-yellow-50 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-2 text-yellow-600 dark:text-yellow-400">
@@ -91,51 +98,108 @@
             </div>
         </div>
 
-        <!-- جدول تصفية الرواتب والـ Overtime والجزاءات المتطور -->
+        <!-- إدارة الأرصدة والفلوس القديمة (خارج حسابات الشهر) -->
+        <div class="bg-amber-50 dark:bg-amber-950/20 p-4 border border-amber-200 dark:border-amber-900 rounded-xl mb-8">
+            <h3 class="text-sm font-bold text-amber-800 dark:text-amber-400 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                الأرصدة والفلوس القديمة المستحقة (خارج حسابات وعمليات هذا الشهر الحالي)
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- إيمان رصيد قديم -->
+                <div class="bg-white dark:bg-slate-700 p-3 rounded-lg border border-amber-100 dark:border-slate-600 shadow-sm">
+                    <span class="font-bold text-xs block text-slate-600 dark:text-slate-300 mb-2">رصيد الموظفة إيمان القديم:</span>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="text-[10px] text-gray-400 block font-bold">المبلغ (سالب لو عليها):</label>
+                            <input type="number" id="imanOldBalance" value="0" class="w-full p-1 text-sm border rounded text-center font-bold dark:bg-slate-800 dark:text-white" oninput="saveInputs(); updateDashboard()">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-[10px] text-gray-400 block font-bold">ملحوظة تظهر عندها (بتاعة إيه):</label>
+                            <input type="text" id="imanOldNote" placeholder="مثال: باقي حساب من سنة 2025" class="w-full p-1 text-sm border rounded dark:bg-slate-800 dark:text-white" oninput="saveInputs(); updateDashboard()">
+                        </div>
+                    </div>
+                </div>
+                <!-- دعاء رصيد قديم -->
+                <div class="bg-white dark:bg-slate-700 p-3 rounded-lg border border-amber-100 dark:border-slate-600 shadow-sm">
+                    <span class="font-bold text-xs block text-slate-600 dark:text-slate-300 mb-2">رصيد الموظفة دعاء القديم:</span>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="text-[10px] text-gray-400 block font-bold">المبلغ (سالب لو عليها):</label>
+                            <input type="number" id="doaaOldBalance" value="0" class="w-full p-1 text-sm border rounded text-center font-bold dark:bg-slate-800 dark:text-white" oninput="saveInputs(); updateDashboard()">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-[10px] text-gray-400 block font-bold">ملحوظة تظهر عندها (بتاعة إيه):</label>
+                            <input type="text" id="doaaOldNote" placeholder="مثال: تسوية مسبقة لنظام قديم" class="w-full p-1 text-sm border rounded dark:bg-slate-800 dark:text-white" oninput="saveInputs(); updateDashboard()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- جدول تصفية الرواتب والـ Overtime والمبيت والجزاءات التراكمي الذكي -->
         <div class="mb-8">
             <h2 class="text-md font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
                 <i class="fa-solid fa-wallet text-green-600 dark:text-green-400"></i>
-                تصفية الرواتب وحساب العمل الإضافي والجزاءات المستقطعة
+                تصفية الرواتب وعمل إضافي المبيت وتتبع السلف التراكمية عابرة الشهور
             </h2>
             <div class="overflow-x-auto border border-gray-200 dark:border-slate-600 rounded-xl shadow-sm">
-                <table class="w-full text-center border-collapse">
+                <table class="w-full text-center border-collapse min-w-[1100px]">
                   <thead>
-                    <tr class="bg-green-700 dark:bg-green-800 text-white font-bold text-xs md:text-sm">
+                    <tr class="bg-green-700 dark:bg-green-800 text-white font-bold text-xs">
                       <th class="p-3">اسم الموظفة</th>
                       <th class="p-3">المرتب الأساسي</th>
                       <th class="p-3">أيام الإضافي</th>
-                      <th class="p-3">فئة اليوم</th>
-                      <th class="p-3">إجمالي الإضافي</th>
-                      <th class="p-3">سلف الشهر</th>
-                      <th class="p-3">جزاءات / خصم</th>
+                      <th class="p-3">فئة اليوم عادي</th>
+                      <th class="p-3">أيام مبيت</th>
+                      <th class="p-3">فئة المبيت</th>
+                      <th class="p-3">إجمالي الإضافي + المبيت</th>
+                      <th class="p-3">سلف تراكمية (مستمرة)</th>
+                      <th class="p-3">خصومات الشهر</th>
                       <th class="p-3">المدفوع كـ راتب</th>
-                      <th class="p-3">صافي المتبقي للقبض</th>
+                      <th class="p-3 bg-amber-600 text-white">رصيد/فلوس قديمة</th>
+                      <th class="p-3">صافي المتبقي للقبض النهائي</th>
                     </tr>
                   </thead>
-                  <tbody class="bg-white text-slate-700 dark:bg-slate-800 dark:text-slate-200 text-xs md:text-sm font-medium">
+                  <tbody class="bg-white text-slate-700 dark:bg-slate-800 dark:text-slate-200 text-xs font-medium">
                     <!-- صف إيمان -->
                     <tr class="border-b border-gray-200 dark:border-slate-600">
-                      <td class="p-3 font-bold bg-gray-50 dark:bg-slate-700">إيمان</td>
-                      <td class="p-2"><input type="number" id="imanBaseSalary" value="3600" min="0" class="w-24 p-1 text-center font-bold border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
-                      <td class="p-2"><input type="number" id="imanDays" value="0" min="0" class="w-16 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
-                      <td class="p-2"><input type="number" id="imanRate" value="120" min="0" class="w-20 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-3 font-bold bg-gray-50 dark:bg-slate-700">
+                         <div>إيمان</div>
+                         <div id="imanOldDisplayNote" class="text-[10px] text-amber-600 dark:text-amber-400 font-semibold mt-1"></div>
+                      </td>
+                      <td class="p-2"><input type="number" id="imanBaseSalary" value="3600" min="0" class="w-20 p-1 text-center font-bold border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2"><input type="number" id="imanDays" value="0" min="0" class="w-14 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2"><input type="number" id="imanRate" value="120" min="0" class="w-16 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <!-- خانات مبيت إيمان الجديدة -->
+                      <td class="p-2 bg-blue-50/50 dark:bg-slate-700/50"><input type="number" id="imanOvernightDays" value="0" min="0" class="w-14 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2 bg-blue-50/50 dark:bg-slate-700/50"><input type="number" id="imanOvernightRate" value="200" min="0" class="w-16 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      
                       <td id="imanOvertimeTotal" class="p-3 font-bold text-blue-600 dark:text-blue-400">0 ج.م</td>
-                      <td id="imanAdvances" class="p-3 text-red-600 font-bold">0 ج.م</td>
+                      <td id="imanAdvances" class="p-3 text-red-600 font-bold bg-red-50/20">0 ج.م</td>
                       <td id="imanDeductions" class="p-3 text-orange-600 dark:text-orange-400 font-bold">0 ج.م</td>
                       <td id="imanPaidSalary" class="p-3 text-purple-600 dark:text-purple-400 font-bold">0 ج.م</td>
-                      <td id="imanNet" class="p-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-bold">0 ج.م</td>
+                      <td id="imanOldBalanceCell" class="p-3 font-bold text-amber-700 dark:text-amber-400 bg-amber-50/30">0 ج.م</td>
+                      <td id="imanNet" class="p-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-bold text-sm">0 ج.م</td>
                     </tr>
                     <!-- صف دعاء -->
                     <tr>
-                      <td class="p-3 font-bold bg-gray-50 dark:bg-slate-700">دعاء</td>
-                      <td class="p-2"><input type="number" id="doaaBaseSalary" value="2600" min="0" class="w-24 p-1 text-center font-bold border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
-                      <td class="p-2"><input type="number" id="doaaDays" value="0" min="0" class="w-16 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
-                      <td class="p-2"><input type="number" id="doaaRate" value="100" min="0" class="w-20 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-3 font-bold bg-gray-50 dark:bg-slate-700">
+                         <div>دعاء</div>
+                         <div id="doaaOldDisplayNote" class="text-[10px] text-amber-600 dark:text-amber-400 font-semibold mt-1"></div>
+                      </td>
+                      <td class="p-2"><input type="number" id="doaaBaseSalary" value="2600" min="0" class="w-20 p-1 text-center font-bold border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2"><input type="number" id="doaaDays" value="0" min="0" class="w-14 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2"><input type="number" id="doaaRate" value="100" min="0" class="w-16 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <!-- خانات مبيت دعاء الجديدة -->
+                      <td class="p-2 bg-blue-50/50 dark:bg-slate-700/50"><input type="number" id="doaaOvernightDays" value="0" min="0" class="w-14 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2 bg-blue-50/50 dark:bg-slate-700/50"><input type="number" id="doaaOvernightRate" value="180" min="0" class="w-16 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      
                       <td id="doaaOvertimeTotal" class="p-3 font-bold text-blue-600 dark:text-blue-400">0 ج.م</td>
-                      <td id="doaaAdvances" class="p-3 text-red-600 font-bold">0 ج.م</td>
+                      <td id="doaaAdvances" class="p-3 text-red-600 font-bold bg-red-50/20">0 ج.م</td>
                       <td id="doaaDeductions" class="p-3 text-orange-600 dark:text-orange-400 font-bold">0 ج.م</td>
                       <td id="doaaPaidSalary" class="p-3 text-purple-600 dark:text-purple-400 font-bold">0 ج.م</td>
-                      <td id="doaaNet" class="p-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-bold">0 ج.م</td>
+                      <td id="doaaOldBalanceCell" class="p-3 font-bold text-amber-700 dark:text-amber-400 bg-amber-50/30">0 ج.م</td>
+                      <td id="doaaNet" class="p-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-bold text-sm">0 ج.م</td>
                     </tr>
                   </tbody>
                 </table>
@@ -150,7 +214,7 @@
             </h2>
             
             <div class="flex flex-wrap gap-2 mb-4 border-b pb-2 border-gray-200 dark:border-slate-600">
-                <button onclick="switchFormTab('expense')" id="tab-expense" class="px-4 py-2 text-xs font-bold rounded-lg bg-blue-900 text-white shadow-sm">🏠 مصروفات المنزل / استلام الخزنة</button>
+                <button onclick="switchFormTab('expense')" id="tab-expense" class="px-4 py-2 text-xs font-bold rounded-lg bg-blue-900 text-white shadow-sm">🏠 مصاريف العيادة / إيراد الخزنة</button>
                 <button onclick="switchFormTab('advance')" id="tab-advance" class="px-4 py-2 text-xs font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">💸 سلفة موظف</button>
                 <button onclick="switchFormTab('deduct')" id="tab-deduct" class="px-4 py-2 text-xs font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">⚠️ خصم / جزاء لموظف</button>
                 <button onclick="switchFormTab('salary')" id="tab-salary" class="px-4 py-2 text-xs font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">🤝 سداد راتب صافي</button>
@@ -159,7 +223,7 @@
             <!-- نموذج المصاريف -->
             <form id="form-expense" onsubmit="addTransaction(event, 'normal')" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
                 <input type="date" id="expDate" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" required>
-                <input type="text" id="expTitle" placeholder="البند (مثال: طلبات سوق / كهرباء)" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 md:col-span-2" required>
+                <input type="text" id="expTitle" placeholder="البند (مثال: مستلزمات طبية / إيجار / سداد سلفة إيمان)" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 md:col-span-2" required>
                 <input type="number" id="expIncome" placeholder="مبلغ استلام للخزنة" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" min="0">
                 <input type="number" id="expExpense" placeholder="مبلغ مصروف" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" min="0">
                 <button type="submit" class="p-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-sm font-bold md:col-span-5 shadow-sm transition">حفظ المعاملة</button>
@@ -177,7 +241,7 @@
                 <button type="submit" class="p-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-bold sm:col-span-3 shadow-sm transition">حفظ السلفة المستقطعة</button>
             </form>
 
-            <!-- نموذج الخصومات / الجزاءات مع خانة السبب الجديدة -->
+            <!-- نموذج الخصومات / الجزاءات -->
             <form id="form-deduct" onsubmit="addTransaction(event, 'deduct')" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 hidden">
                 <input type="date" id="dedDate" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" required>
                 <select id="dedStaff" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 font-bold" required>
@@ -186,7 +250,7 @@
                     <option value="دعاء">دعاء</option>
                 </select>
                 <input type="number" id="dedAmount" placeholder="مبلغ الخصم / الجزاء" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" min="1" required>
-                <input type="text" id="dedReason" placeholder="سبب الجزاء (مثال: تأخير ساعة / غياب)" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" required>
+                <input type="text" id="dedReason" placeholder="سبب الجزاء (مثال: تأخير / غياب)" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" required>
                 <button type="submit" class="p-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm font-bold md:col-span-4 shadow-sm transition">تطبيق الخصم المستقطع</button>
             </form>
 
@@ -203,14 +267,14 @@
             </form>
         </div>
 
-        <!-- أزرار الفلترة المخصصة المحدثة (موظفين + مصروفات + استلام) -->
+        <!-- أزرار الفلترة المخصصة المحدثة -->
         <div class="mb-4 flex flex-wrap gap-2 items-center bg-slate-50 dark:bg-slate-700/30 p-3 rounded-xl border border-gray-200 dark:border-slate-600 text-xs">
             <span class="font-bold text-gray-500 dark:text-gray-400"><i class="fa-solid fa-filter"></i> فلاتر تصفية السجل المتقدمة:</span>
             <button onclick="setFilter('all')" id="filterBtn-all" class="px-3 py-1.5 font-bold rounded-lg bg-slate-800 text-white">عرض كل الحركات</button>
             <button onclick="setFilter('إيمان')" id="filterBtn-إيمان" class="px-3 py-1.5 font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">كشف حساب إيمان</button>
             <button onclick="setFilter('دعاء')" id="filterBtn-دعاء" class="px-3 py-1.5 font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">كشف حساب دعاء</button>
             <div class="h-4 w-[1px] bg-gray-300 dark:bg-slate-600 mx-1"></div>
-            <button onclick="setFilter('only-expense')" id="filterBtn-only-expense" class="px-3 py-1.5 font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200 text-red-600 dark:text-red-400"><i class="fa-solid fa-arrow-up-long"></i> المصروفاات فقط</button>
+            <button onclick="setFilter('only-expense')" id="filterBtn-only-expense" class="px-3 py-1.5 font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200 text-red-600 dark:text-red-400"><i class="fa-solid fa-arrow-up-long"></i> المصروفات فقط</button>
             <button onclick="setFilter('only-income')" id="filterBtn-only-income" class="px-3 py-1.5 font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200 text-green-600 dark:text-green-400"><i class="fa-solid fa-arrow-down-long"></i> المقبوضات فقط</button>
         </div>
 
@@ -226,8 +290,8 @@
                     <tr>
                       <th class="p-2.5">التاريخ</th>
                       <th class="p-2.5 text-right pr-4">البيان / نوع المعاملة</th>
-                      <th class="p-2.5">الاستلام</th>
-                      <th class="p-2.5">المدفوع</th>
+                      <th class="p-2.5">الاستلام (إيراد)</th>
+                      <th class="p-2.5">المدفوع (مصروف)</th>
                       <th class="p-2.5">إجراء</th>
                     </tr>
                   </thead>
@@ -242,14 +306,14 @@
         const arabicMonths = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
         let currentFormTab = 'expense';
         let currentSelectedYear = 2026;
-        let currentFilter = 'all'; // الفلتر النشط الافتراضي لجدول الحركات
+        let currentFilter = 'all';
 
         const defaultLedger = [
-            { year: 2026, month: "مايو", date: "2026-05-13", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" },
-            { year: 2026, month: "مايو", date: "2026-05-16", income: 2000, title: "استلام نقدي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" },
-            { year: 2026, month: "مايو", date: "2026-05-17", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" },
-            { year: 2026, month: "مايو", date: "2026-05-19", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" },
-            { year: 2026, month: "مايو", date: "2026-05-25", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" }
+            { year: 2026, month: "مايو", date: "2026-05-13", income: 3000, title: "استلام نقدي عيادة هرم", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-16", income: 2000, title: "استلام نقدي عيادة دقي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-17", income: 3000, title: "إيراد جلسات علاج طبيعي المكثف", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-19", income: 3000, title: "استلام نقدي إضافي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-25", income: 3000, title: "إيراد الخزنة الرئيسي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" }
         ];
 
         let ledger = JSON.parse(localStorage.getItem('home_ledger')) || defaultLedger;
@@ -282,22 +346,40 @@
                 imanBase: document.getElementById('imanBaseSalary').value,
                 imanDays: document.getElementById('imanDays').value,
                 imanRate: document.getElementById('imanRate').value,
+                imanOvernightDays: document.getElementById('imanOvernightDays').value,
+                imanOvernightRate: document.getElementById('imanOvernightRate').value,
+                imanOldBalance: document.getElementById('imanOldBalance').value,
+                imanOldNote: document.getElementById('imanOldNote').value,
+                
                 doaaBase: document.getElementById('doaaBaseSalary').value,
                 doaaDays: document.getElementById('doaaDays').value,
-                doaaRate: document.getElementById('doaaRate').value
+                doaaRate: document.getElementById('doaaRate').value,
+                doaaOvernightDays: document.getElementById('doaaOvernightDays').value,
+                doaaOvernightRate: document.getElementById('doaaOvernightRate').value,
+                doaaOldBalance: document.getElementById('doaaOldBalance').value,
+                doaaOldNote: document.getElementById('doaaOldNote').value
             };
-            localStorage.setItem('payroll_inputs', JSON.stringify(inputs));
+            localStorage.setItem('payroll_inputs_v2', JSON.stringify(inputs));
         }
 
         function loadInputs() {
-            const inputs = JSON.parse(localStorage.getItem('payroll_inputs'));
+            const inputs = JSON.parse(localStorage.getItem('payroll_inputs_v2'));
             if (inputs) {
-                document.getElementById('imanBaseSalary').value = inputs.imanBase || 3600;
-                document.getElementById('imanDays').value = inputs.imanDays || 0;
-                document.getElementById('imanRate').value = inputs.imanRate || 120;
-                document.getElementById('doaaBaseSalary').value = inputs.doaaBase || 2600;
-                document.getElementById('doaaDays').value = inputs.doaaDays || 0;
-                document.getElementById('doaaRate').value = inputs.doaaRate || 100;
+                document.getElementById('imanBaseSalary').value = inputs.imanBase !== undefined ? inputs.imanBase : 3600;
+                document.getElementById('imanDays').value = inputs.imanDays !== undefined ? inputs.imanDays : 0;
+                document.getElementById('imanRate').value = inputs.imanRate !== undefined ? inputs.imanRate : 120;
+                document.getElementById('imanOvernightDays').value = inputs.imanOvernightDays !== undefined ? inputs.imanOvernightDays : 0;
+                document.getElementById('imanOvernightRate').value = inputs.imanOvernightRate !== undefined ? inputs.imanOvernightRate : 200;
+                document.getElementById('imanOldBalance').value = inputs.imanOldBalance !== undefined ? inputs.imanOldBalance : 0;
+                document.getElementById('imanOldNote').value = inputs.imanOldNote !== undefined ? inputs.imanOldNote : "";
+
+                document.getElementById('doaaBaseSalary').value = inputs.doaaBase !== undefined ? inputs.doaaBase : 2600;
+                document.getElementById('doaaDays').value = inputs.doaaDays !== undefined ? inputs.doaaDays : 0;
+                document.getElementById('doaaRate').value = inputs.doaaRate !== undefined ? inputs.doaaRate : 100;
+                document.getElementById('doaaOvernightDays').value = inputs.doaaOvernightDays !== undefined ? inputs.doaaOvernightDays : 0;
+                document.getElementById('doaaOvernightRate').value = inputs.doaaOvernightRate !== undefined ? inputs.doaaOvernightRate : 180;
+                document.getElementById('doaaOldBalance').value = inputs.doaaOldBalance !== undefined ? inputs.doaaOldBalance : 0;
+                document.getElementById('doaaOldNote').value = inputs.doaaOldNote !== undefined ? inputs.doaaOldNote : "";
             }
         }
 
@@ -312,7 +394,6 @@
             document.getElementById('tab-' + tabName).className = "px-4 py-2 text-xs font-bold rounded-lg shadow-sm " + themeClass;
         }
 
-        // تشغيل نظام الفلترة الموسع والشامل
         function setFilter(filterVal) {
             currentFilter = filterVal;
             ['all', 'إيمان', 'دعاء', 'only-expense', 'only-income'].forEach(f => {
@@ -358,29 +439,43 @@
             globalImanDeductions = 0; globalDoaaDeductions = 0;
             globalImanPaidSalary = 0; globalDoaaPaidSalary = 0;
 
-            filteredForTotals.forEach(t => {
-                totalIncome += t.income;
-                totalExpense += t.expense;
-                
-                if (t.isAdvance) {
-                    if (t.staffName === "إيمان") globalImanAdvances += t.expense;
-                    if (t.staffName === "دعاء") globalDoaaAdvances += t.expense;
-                } else if (t.isDeduction) {
-                    if (t.staffName === "إيمان") globalImanDeductions += t.expense;
-                    if (t.staffName === "دعاء") globalDoaaDeductions += t.expense;
-                } else if (t.isSalaryPayment) {
-                    if (t.staffName === "إيمان") globalImanPaidSalary += t.expense;
-                    if (t.staffName === "دعاء") globalDoaaPaidSalary += t.expense;
-                } else {
-                    const title = t.title;
-                    if (title.includes("إيمان") || title.includes("ايمان")) {
-                        if (title.includes("سلف") || title.includes("استلاف")) globalImanAdvances += t.expense;
-                        else if (title.includes("خصم") || title.includes("جزاء")) globalImanDeductions += t.expense;
-                        else if (title.includes("مرتب") || title.includes("سداد")) globalImanPaidSalary += t.expense;
-                    } else if (title.includes("دعاء") || title.includes("دهاء")) {
-                        if (title.includes("سلف") || title.includes("استلاف")) globalDoaaAdvances += t.expense;
-                        else if (title.includes("خصم") || title.includes("جزاء")) globalDoaaDeductions += t.expense;
-                        else if (title.includes("مرتب") || title.includes("سداد")) globalDoaaPaidSalary += t.expense;
+            let currentMonthIdx = arabicMonths.indexOf(month);
+
+            // حساب السلف الذكية التراكمية عابرة الشهور
+            ledger.forEach(t => {
+                let tMonthIdx = arabicMonths.indexOf(t.month);
+                let isPastOrCurrent = t.year < currentSelectedYear || (t.year === currentSelectedYear && tMonthIdx <= currentMonthIdx);
+
+                if (isPastOrCurrent) {
+                    if (t.isAdvance) {
+                        if (t.staffName === "إيمان") globalImanAdvances += t.expense;
+                        if (t.staffName === "دعاء") globalDoaaAdvances += t.expense;
+                    }
+                    if (t.income > 0 && (t.title.includes("سداد سلفة") || t.title.includes("رجوع سلفة") || t.title.includes("ارجاع سلفة"))) {
+                        if (t.title.includes("إيمان") || t.title.includes("ايمان")) globalImanAdvances -= t.income;
+                        if (t.title.includes("دعاء")) globalDoaaAdvances -= t.income;
+                    }
+                }
+
+                if (t.year === currentSelectedYear && t.month === month) {
+                    totalIncome += t.income;
+                    totalExpense += t.expense;
+                    
+                    if (t.isDeduction) {
+                        if (t.staffName === "إيمان") globalImanDeductions += t.expense;
+                        if (t.staffName === "دعاء") globalDoaaDeductions += t.expense;
+                    } else if (t.isSalaryPayment) {
+                        if (t.staffName === "إيمان") globalImanPaidSalary += t.expense;
+                        if (t.staffName === "دعاء") globalDoaaPaidSalary += t.expense;
+                    } else if (!t.isAdvance) {
+                        const title = t.title;
+                        if (title.includes("إيمان") || title.includes("ايمان")) {
+                            if (title.includes("خصم") || title.includes("جزاء")) globalImanDeductions += t.expense;
+                            else if (title.includes("مرتب") || title.includes("سداد")) globalImanPaidSalary += t.expense;
+                        } else if (title.includes("دعاء")) {
+                            if (title.includes("خصم") || title.includes("جزاء")) globalDoaaDeductions += t.expense;
+                            else if (title.includes("مرتب") || title.includes("سداد")) globalDoaaPaidSalary += t.expense;
+                        }
                     }
                 }
             });
@@ -401,9 +496,29 @@
                 vaultIcon.className = "w-9 h-9 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-2 text-red-600 dark:text-red-400";
             }
 
+            // تحديث نصوص الملاحظات والفلوس القديمة
+            const imanOldBal = Number(document.getElementById('imanOldBalance').value) || 0;
+            const imanOldNote = document.getElementById('imanOldNote').value.trim();
+            const documentImanNote = document.getElementById('imanOldDisplayNote');
+            document.getElementById('imanOldBalanceCell').innerText = (imanOldBal >= 0 ? "+ " : "") + imanOldBal.toLocaleString() + " ج.م";
+            if(imanOldNote !== "") {
+                documentImanNote.innerHTML = `<i class="fa-solid fa-circle-info text-amber-500"></i> ${imanOldNote} (${imanOldBal} ج.م)`;
+            } else {
+                documentImanNote.innerText = imanOldBal !== 0 ? `فلوس قديمة: ${imanOldBal} ج.م` : "";
+            }
+
+            const doaaOldBal = Number(document.getElementById('doaaOldBalance').value) || 0;
+            const doaaOldNote = document.getElementById('doaaOldNote').value.trim();
+            const documentDoaaNote = document.getElementById('doaaOldDisplayNote');
+            document.getElementById('doaaOldBalanceCell').innerText = (doaaOldBal >= 0 ? "+ " : "") + doaaOldBal.toLocaleString() + " ج.م";
+            if(doaaOldNote !== "") {
+                documentDoaaNote.innerHTML = `<i class="fa-solid fa-circle-info text-amber-500"></i> ${doaaOldNote} (${doaaOldBal} ج.م)`;
+            } else {
+                documentDoaaNote.innerText = doaaOldBal !== 0 ? `فلوس قديمة: ${doaaOldBal} ج.م` : "";
+            }
+
             calculatePayroll();
 
-            // تطبيق الفلاتر الموسعة على جدول السجل
             let finalFilteredList = filteredForTotals;
             if (currentFilter === 'only-expense') {
                 finalFilteredList = filteredForTotals.filter(t => t.expense > 0);
@@ -413,8 +528,7 @@
                 finalFilteredList = filteredForTotals.filter(t => 
                     t.staffName === currentFilter || 
                     t.title.includes(currentFilter) || 
-                    (currentFilter === "إيمان" && t.title.includes("ايمان")) ||
-                    (currentFilter === "دعاء" && t.title.includes("دهاء"))
+                    (currentFilter === "إيمان" && t.title.includes("ايمان"))
                 );
             }
 
@@ -422,7 +536,7 @@
             tbody.innerHTML = '';
 
             if (finalFilteredList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-gray-400 italic dark:text-gray-500">لا توجد حركات مسجلة تطابق الفلتر الحالي.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-gray-400 italic dark:text-gray-500">لا توجد حركات مسجلة تطابق الفلتر الحالي لهذا الشهر.</td></tr>`;
             } else {
                 finalFilteredList.forEach((t) => {
                     const globalIndex = ledger.indexOf(t);
@@ -445,30 +559,39 @@
         }
 
         function calculatePayroll() {
+            // إيمان
             const imanSalary = Number(document.getElementById('imanBaseSalary').value) || 0;
-            const doaaSalary = Number(document.getElementById('doaaBaseSalary').value) || 0;
-
             const imanDays = Number(document.getElementById('imanDays').value) || 0;
             const imanRate = Number(document.getElementById('imanRate').value) || 0;
-            const imanOvertime = imanDays * imanRate;
-            document.getElementById('imanOvertimeTotal').innerText = imanOvertime.toLocaleString() + " ج.م";
+            const imanOvernightDays = Number(document.getElementById('imanOvernightDays').value) || 0;
+            const imanOvernightRate = Number(document.getElementById('imanOvernightRate').value) || 0;
+            const imanOldBal = Number(document.getElementById('imanOldBalance').value) || 0;
 
+            const imanTotalOvertime = (imanDays * imanRate) + (imanOvernightDays * imanOvernightRate);
+            document.getElementById('imanOvertimeTotal').innerText = imanTotalOvertime.toLocaleString() + " ج.م";
+            document.getElementById('imanAdvances').innerText = globalImanAdvances.toLocaleString() + " ج.م";
+            document.getElementById('imanDeductions').innerText = globalImanDeductions.toLocaleString() + " ج.م";
+            document.getElementById('imanPaidSalary').innerText = globalImanPaidSalary.toLocaleString() + " ج.م";
+            
+            const imanNetFinal = (imanSalary + imanTotalOvertime + imanOldBal) - globalImanAdvances - globalImanDeductions - globalImanPaidSalary;
+            document.getElementById('imanNet').innerText = imanNetFinal.toLocaleString() + " ج.م";
+
+            // دعاء
+            const doaaSalary = Number(document.getElementById('doaaBaseSalary').value) || 0;
             const doaaDays = Number(document.getElementById('doaaDays').value) || 0;
             const doaaRate = Number(document.getElementById('doaaRate').value) || 0;
-            const doaaOvertime = doaaDays * doaaRate;
-            document.getElementById('doaaOvertimeTotal').innerText = doaaOvertime.toLocaleString() + " ج.م";
+            const doaaOvernightDays = Number(document.getElementById('doaaOvernightDays').value) || 0;
+            const doaaOvernightRate = Number(document.getElementById('doaaOvernightRate').value) || 0;
+            const doaaOldBal = Number(document.getElementById('doaaOldBalance').value) || 0;
 
-            document.getElementById('imanAdvances').innerText = globalImanAdvances.toLocaleString() + " ج.م";
+            const doaaTotalOvertime = (doaaDays * doaaRate) + (doaaOvernightDays * doaaOvernightRate);
+            document.getElementById('doaaOvertimeTotal').innerText = doaaTotalOvertime.toLocaleString() + " ج.م";
             document.getElementById('doaaAdvances').innerText = globalDoaaAdvances.toLocaleString() + " ج.م";
-            
-            document.getElementById('imanDeductions').innerText = globalImanDeductions.toLocaleString() + " ج.م";
             document.getElementById('doaaDeductions').innerText = globalDoaaDeductions.toLocaleString() + " ج.م";
-            
-            document.getElementById('imanPaidSalary').innerText = globalImanPaidSalary.toLocaleString() + " ج.م";
-            document.getElementById('doaaPaidSalary').innerText = globalDoaaPaidSalary.toLocaleString() + " ج.m";
+            document.getElementById('doaaPaidSalary').innerText = globalDoaaPaidSalary.toLocaleString() + " ج.م";
 
-            document.getElementById('imanNet').innerText = (imanSalary + imanOvertime - globalImanAdvances - globalImanDeductions - globalImanPaidSalary).toLocaleString() + " ج.م";
-            document.getElementById('doaaNet').innerText = (doaaSalary + doaaOvertime - globalDoaaAdvances - globalDoaaDeductions - globalDoaaPaidSalary).toLocaleString() + " ج.م";
+            const doaaNetFinal = (doaaSalary + doaaTotalOvertime + doaaOldBal) - globalDoaaAdvances - globalDoaaDeductions - globalDoaaPaidSalary;
+            document.getElementById('doaaNet').innerText = doaaNetFinal.toLocaleString() + " ج.م";
         }
 
         function deleteTransaction(index) {
@@ -541,6 +664,83 @@
             document.getElementById('monthFilter').value = month;
 
             saveAndRefresh();
+        }
+
+        function exportToExcel() {
+            try {
+                const currentMonth = document.getElementById('monthFilter').value;
+                const currentYear = document.getElementById('yearFilter').value;
+
+                const summaryData = [
+                    ["لوحة تحكم وإدارة عيادات BodyFix الذكية"],
+                    ["تاريخ التقرير", `${currentMonth} - ${currentYear}`],
+                    [],
+                    ["رصيد مرحل سابق", document.getElementById('prevCarryover').innerText],
+                    ["استلام جديد بالخزنة", document.getElementById('totalIncome').innerText],
+                    ["إجمالي المدفوعات والمصاريف", document.getElementById('totalExpense').innerText],
+                    ["الصافي النهائي بالخزنة", document.getElementById('netVault').innerText],
+                ];
+                const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+
+                const payrollHeader = [
+                    "اسم الموظفة", "المرتب الأساسي", "أيام إضافي عادي", "فئة اليوم عادي", 
+                    "أيام مبيت إضافي", "فئة المبيت", "إجمالي الإضافي والمبيت", 
+                    "سلف تراكمية مستمرة", "خصومات وجزاءات", "المدفوع سلفاً", "أرصدة وفلوس قديمة", "ملاحظة الفلوس القديمة", "صافي المتبقي للقبض النهائي"
+                ];
+
+                const p1 = [
+                    "إيمان", 
+                    document.getElementById('imanBaseSalary').value,
+                    document.getElementById('imanDays').value,
+                    document.getElementById('imanRate').value,
+                    document.getElementById('imanOvernightDays').value,
+                    document.getElementById('imanOvernightRate').value,
+                    document.getElementById('imanOvertimeTotal').innerText,
+                    document.getElementById('imanAdvances').innerText,
+                    document.getElementById('imanDeductions').innerText,
+                    document.getElementById('imanPaidSalary').innerText,
+                    document.getElementById('imanOldBalance').value,
+                    document.getElementById('imanOldNote').value,
+                    document.getElementById('imanNet').innerText
+                ];
+
+                const p2 = [
+                    "دعاء", 
+                    document.getElementById('doaaBaseSalary').value,
+                    document.getElementById('doaaDays').value,
+                    document.getElementById('doaaRate').value,
+                    document.getElementById('doaaOvernightDays').value,
+                    document.getElementById('doaaOvernightRate').value,
+                    document.getElementById('doaaOvertimeTotal').innerText,
+                    document.getElementById('doaaAdvances').innerText,
+                    document.getElementById('doaaDeductions').innerText,
+                    document.getElementById('doaaPaidSalary').innerText,
+                    document.getElementById('doaaOldBalance').value,
+                    document.getElementById('doaaOldNote').value,
+                    document.getElementById('doaaNet').innerText
+                ];
+
+                const wsPayroll = XLSX.utils.aoa_to_sheet([payrollHeader, p1, p2]);
+
+                const ledgerHeader = ["السنة", "الشهر", "التاريخ", "البيان / نوع الحركة", "الاستلام (الإيراد)", "المدفوع (المصروف)", "اسم الموظف المرتبط"];
+                const ledgerRows = ledger.map(t => [
+                    t.year, t.month, t.date, t.title, t.income, t.expense, t.staffName || "-"
+                ]);
+                const wsLedger = XLSX.utils.aoa_to_sheet([ledgerHeader, ...ledgerRows]);
+
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, wsSummary, "ملخص الخزنة");
+                XLSX.utils.book_append_sheet(wb, wsPayroll, "تصفية الأجور والرواتب");
+                XLSX.utils.book_append_sheet(wb, wsLedger, "سجل الحركات الشامل");
+
+                if(!wb.Workbook) wb.Workbook = {};
+                if(!wb.Workbook.Views) wb.Workbook.Views = [{}];
+                wb.Workbook.Views[0].RTL = true;
+
+                XLSX.writeFile(wb, `BodyFix_Report_${currentMonth}_${currentYear}.xlsx`);
+            } catch (error) {
+                alert("حدث خطأ أثناء تصدير البيانات لإكسيل: " + error.message);
+            }
         }
 
         function toggleDarkMode() {
