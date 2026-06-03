@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم مصاريف المنزل والسلف</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; transition: background-color 0.3s, color 0.3s; }
+    </style>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+</head>
+<body class="bg-gray-100 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen p-4 md:p-6">
+
+    <div class="max-w-6xl mx-auto bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 relative">
+        
+        <!-- زرار الـ Dark Mode -->
+        <button onclick="toggleDarkMode()" class="absolute left-6 top-6 w-10 h-10 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-yellow-400 rounded-full flex items-center justify-center shadow-sm transition">
+            <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+        </button>
+
+        <!-- العنوان الرئيسي -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white flex justify-center items-center gap-3">
+                <i class="fa-solid fa-chart-pie text-blue-600 dark:text-blue-400"></i>
+                لوحة التحكم والداشبورد الذكي للمنزل
+            </h1>
+            <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm">نظام مستدام لانهائي مع تتبع أسباب الجزاءات وفلاتر ذكية متكاملة للخزنة والموظفين</p>
+        </div>
+
+        <!-- فلاتر التحكم التفاعلية اللانهائية -->
+        <div class="grid grid-cols-2 gap-4 mb-6 bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-gray-200 dark:border-slate-600">
+            <div>
+                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">اختر السنة:</label>
+                <select id="yearFilter" class="w-full p-2.5 border border-gray-300 dark:border-slate-500 rounded-lg bg-white dark:bg-slate-700 font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500" onchange="updateDashboard()">
+                    <!-- السنين بتنزل هنا لوحدها ديناميكياً -->
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">اختر الشهر:</label>
+                <select id="monthFilter" class="w-full p-2.5 border border-gray-300 dark:border-slate-500 rounded-lg bg-white dark:bg-slate-700 font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500" onchange="updateDashboard()">
+                    <option value="يناير">يناير</option>
+                    <option value="فبراير">فبراير</option>
+                    <option value="مارس">مارس</option>
+                    <option value="أبريل">أبريل</option>
+                    <option value="مايو" selected>مايو</option>
+                    <option value="يونيو">يونيو</option>
+                    <option value="يوليو">يوليو</option>
+                    <option value="أغسطس">أغسطس</option>
+                    <option value="سبتمبر">سبتمبر</option>
+                    <option value="أكتوبر">أكتوبر</option>
+                    <option value="نوفمبر">نوفمبر</option>
+                    <option value="ديسمبر">ديسمبر</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- كروت كشف أداء الخزنة التراكمي -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-4 dark:bg-slate-700 rounded-xl border border-gray-200 dark:border-slate-600 text-center shadow-sm">
+                <div class="w-9 h-9 bg-yellow-50 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-2 text-yellow-600 dark:text-yellow-400">
+                    <i class="fa-solid fa-share-from-square"></i>
+                </div>
+                <p class="text-[11px] font-bold text-gray-400 uppercase">رصيد مرحل سابق</p>
+                <p id="prevCarryover" class="text-lg font-bold text-slate-800 dark:text-white mt-1">0 ج.م</p>
+            </div>
+            <div class="bg-white p-4 dark:bg-slate-700 rounded-xl border border-gray-200 dark:border-slate-600 text-center shadow-sm">
+                <div class="w-9 h-9 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-2 text-blue-600 dark:text-blue-400">
+                    <i class="fa-solid fa-arrow-down-long"></i>
+                </div>
+                <p class="text-[11px] font-bold text-gray-400 uppercase">استلام جديد بالخزنة</p>
+                <p id="totalIncome" class="text-lg font-bold text-slate-800 dark:text-white mt-1">0 ج.م</p>
+            </div>
+            <div class="bg-white p-4 dark:bg-slate-700 rounded-xl border border-gray-200 dark:border-slate-600 text-center shadow-sm">
+                <div class="w-9 h-9 bg-red-50 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-2 text-red-600 dark:text-red-400">
+                    <i class="fa-solid fa-arrow-up-long"></i>
+                </div>
+                <p class="text-[11px] font-bold text-gray-400 uppercase">إجمالي المدفوعات والمصاريف</p>
+                <p id="totalExpense" class="text-lg font-bold text-red-600 dark:text-red-400 mt-1">0 ج.م</p>
+            </div>
+            <div id="vaultCard" class="p-4 rounded-xl border text-center shadow-sm transition-colors">
+                <div id="vaultIcon" class="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <i class="fa-solid fa-vault"></i>
+                </div>
+                <p class="text-[11px] font-bold text-gray-400 uppercase">الصافي النهائي بالخزنة</p>
+                <p id="netVault" class="text-lg font-bold mt-1">0 ج.م</p>
+            </div>
+        </div>
+
+        <!-- جدول تصفية الرواتب والـ Overtime والجزاءات المتطور -->
+        <div class="mb-8">
+            <h2 class="text-md font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-wallet text-green-600 dark:text-green-400"></i>
+                تصفية الرواتب وحساب العمل الإضافي والجزاءات المستقطعة
+            </h2>
+            <div class="overflow-x-auto border border-gray-200 dark:border-slate-600 rounded-xl shadow-sm">
+                <table class="w-full text-center border-collapse">
+                  <thead>
+                    <tr class="bg-green-700 dark:bg-green-800 text-white font-bold text-xs md:text-sm">
+                      <th class="p-3">اسم الموظفة</th>
+                      <th class="p-3">المرتب الأساسي</th>
+                      <th class="p-3">أيام الإضافي</th>
+                      <th class="p-3">فئة اليوم</th>
+                      <th class="p-3">إجمالي الإضافي</th>
+                      <th class="p-3">سلف الشهر</th>
+                      <th class="p-3">جزاءات / خصم</th>
+                      <th class="p-3">المدفوع كـ راتب</th>
+                      <th class="p-3">صافي المتبقي للقبض</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white text-slate-700 dark:bg-slate-800 dark:text-slate-200 text-xs md:text-sm font-medium">
+                    <!-- صف إيمان -->
+                    <tr class="border-b border-gray-200 dark:border-slate-600">
+                      <td class="p-3 font-bold bg-gray-50 dark:bg-slate-700">إيمان</td>
+                      <td class="p-2"><input type="number" id="imanBaseSalary" value="3600" min="0" class="w-24 p-1 text-center font-bold border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2"><input type="number" id="imanDays" value="0" min="0" class="w-16 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2"><input type="number" id="imanRate" value="120" min="0" class="w-20 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td id="imanOvertimeTotal" class="p-3 font-bold text-blue-600 dark:text-blue-400">0 ج.م</td>
+                      <td id="imanAdvances" class="p-3 text-red-600 font-bold">0 ج.م</td>
+                      <td id="imanDeductions" class="p-3 text-orange-600 dark:text-orange-400 font-bold">0 ج.م</td>
+                      <td id="imanPaidSalary" class="p-3 text-purple-600 dark:text-purple-400 font-bold">0 ج.م</td>
+                      <td id="imanNet" class="p-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-bold">0 ج.م</td>
+                    </tr>
+                    <!-- صف دعاء -->
+                    <tr>
+                      <td class="p-3 font-bold bg-gray-50 dark:bg-slate-700">دعاء</td>
+                      <td class="p-2"><input type="number" id="doaaBaseSalary" value="2600" min="0" class="w-24 p-1 text-center font-bold border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2"><input type="number" id="doaaDays" value="0" min="0" class="w-16 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2"><input type="number" id="doaaRate" value="100" min="0" class="w-20 p-1 text-center border rounded dark:bg-slate-700 dark:text-white" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td id="doaaOvertimeTotal" class="p-3 font-bold text-blue-600 dark:text-blue-400">0 ج.م</td>
+                      <td id="doaaAdvances" class="p-3 text-red-600 font-bold">0 ج.م</td>
+                      <td id="doaaDeductions" class="p-3 text-orange-600 dark:text-orange-400 font-bold">0 ج.م</td>
+                      <td id="doaaPaidSalary" class="p-3 text-purple-600 dark:text-purple-400 font-bold">0 ج.م</td>
+                      <td id="doaaNet" class="p-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-bold">0 ج.م</td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- قسم إضافة الحركات الذكي -->
+        <div class="bg-slate-50 p-5 dark:bg-slate-700/30 rounded-xl border border-gray-200 dark:border-slate-600 mb-6">
+            <h2 class="text-sm font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-blue-600 dark:text-blue-400"></i>
+                إضافة حركة جديدة للسجل (اختر نوع المعاملة من التابات بالأسفل)
+            </h2>
+            
+            <div class="flex flex-wrap gap-2 mb-4 border-b pb-2 border-gray-200 dark:border-slate-600">
+                <button onclick="switchFormTab('expense')" id="tab-expense" class="px-4 py-2 text-xs font-bold rounded-lg bg-blue-900 text-white shadow-sm">🏠 مصروفات المنزل / استلام الخزنة</button>
+                <button onclick="switchFormTab('advance')" id="tab-advance" class="px-4 py-2 text-xs font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">💸 سلفة موظف</button>
+                <button onclick="switchFormTab('deduct')" id="tab-deduct" class="px-4 py-2 text-xs font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">⚠️ خصم / جزاء لموظف</button>
+                <button onclick="switchFormTab('salary')" id="tab-salary" class="px-4 py-2 text-xs font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">🤝 سداد راتب صافي</button>
+            </div>
+
+            <!-- نموذج المصاريف -->
+            <form id="form-expense" onsubmit="addTransaction(event, 'normal')" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+                <input type="date" id="expDate" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" required>
+                <input type="text" id="expTitle" placeholder="البند (مثال: طلبات سوق / كهرباء)" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 md:col-span-2" required>
+                <input type="number" id="expIncome" placeholder="مبلغ استلام للخزنة" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" min="0">
+                <input type="number" id="expExpense" placeholder="مبلغ مصروف" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" min="0">
+                <button type="submit" class="p-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-sm font-bold md:col-span-5 shadow-sm transition">حفظ المعاملة</button>
+            </form>
+
+            <!-- نموذج السلف -->
+            <form id="form-advance" onsubmit="addTransaction(event, 'advance')" class="grid grid-cols-1 sm:grid-cols-3 gap-3 hidden">
+                <input type="date" id="advDate" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" required>
+                <select id="advStaff" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 font-bold" required>
+                    <option value="" disabled selected>اختر اسم الموظفة لمستلم السلفة</option>
+                    <option value="إيمان">إيمان</option>
+                    <option value="دعاء">دعاء</option>
+                </select>
+                <input type="number" id="advAmount" placeholder="مبلغ السلفة المدفوع" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" min="1" required>
+                <button type="submit" class="p-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-bold sm:col-span-3 shadow-sm transition">حفظ السلفة المستقطعة</button>
+            </form>
+
+            <!-- نموذج الخصومات / الجزاءات مع خانة السبب الجديدة -->
+            <form id="form-deduct" onsubmit="addTransaction(event, 'deduct')" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 hidden">
+                <input type="date" id="dedDate" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" required>
+                <select id="dedStaff" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 font-bold" required>
+                    <option value="" disabled selected>اختر اسم الموظفة</option>
+                    <option value="إيمان">إيمان</option>
+                    <option value="دعاء">دعاء</option>
+                </select>
+                <input type="number" id="dedAmount" placeholder="مبلغ الخصم / الجزاء" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" min="1" required>
+                <input type="text" id="dedReason" placeholder="سبب الجزاء (مثال: تأخير ساعة / غياب)" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" required>
+                <button type="submit" class="p-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm font-bold md:col-span-4 shadow-sm transition">تطبيق الخصم المستقطع</button>
+            </form>
+
+            <!-- نموذج سداد الرواتب -->
+            <form id="form-salary" onsubmit="addTransaction(event, 'salary')" class="grid grid-cols-1 sm:grid-cols-3 gap-3 hidden">
+                <input type="date" id="salDate" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" required>
+                <select id="salStaff" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 font-bold" required>
+                    <option value="" disabled selected>اختر اسم الموظفة المقبوضة</option>
+                    <option value="إيمان">إيمان</option>
+                    <option value="دعاء">دعاء</option>
+                </select>
+                <input type="number" id="salAmount" placeholder="المبلغ الصافي المدفوع كـ راتب" class="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700" min="1" required>
+                <button type="submit" class="p-2.5 bg-green-700 hover:bg-green-600 text-white rounded-lg text-sm font-bold sm:col-span-3 shadow-sm transition">حفظ وإثبات سداد الراتب من الخزنة</button>
+            </form>
+        </div>
+
+        <!-- أزرار الفلترة المخصصة المحدثة (موظفين + مصروفات + استلام) -->
+        <div class="mb-4 flex flex-wrap gap-2 items-center bg-slate-50 dark:bg-slate-700/30 p-3 rounded-xl border border-gray-200 dark:border-slate-600 text-xs">
+            <span class="font-bold text-gray-500 dark:text-gray-400"><i class="fa-solid fa-filter"></i> فلاتر تصفية السجل المتقدمة:</span>
+            <button onclick="setFilter('all')" id="filterBtn-all" class="px-3 py-1.5 font-bold rounded-lg bg-slate-800 text-white">عرض كل الحركات</button>
+            <button onclick="setFilter('إيمان')" id="filterBtn-إيمان" class="px-3 py-1.5 font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">كشف حساب إيمان</button>
+            <button onclick="setFilter('دعاء')" id="filterBtn-دعاء" class="px-3 py-1.5 font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">كشف حساب دعاء</button>
+            <div class="h-4 w-[1px] bg-gray-300 dark:bg-slate-600 mx-1"></div>
+            <button onclick="setFilter('only-expense')" id="filterBtn-only-expense" class="px-3 py-1.5 font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200 text-red-600 dark:text-red-400"><i class="fa-solid fa-arrow-up-long"></i> المصروفاات فقط</button>
+            <button onclick="setFilter('only-income')" id="filterBtn-only-income" class="px-3 py-1.5 font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200 text-green-600 dark:text-green-400"><i class="fa-solid fa-arrow-down-long"></i> المقبوضات فقط</button>
+        </div>
+
+        <!-- سجل الحركات المفصل -->
+        <div>
+            <h2 class="text-sm font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-list-ul text-slate-600 dark:text-slate-400"></i>
+                سجل الحركات التفصيلي للفترة المحددة
+            </h2>
+            <div class="overflow-x-auto border border-gray-200 dark:border-slate-600 rounded-xl max-h-96 shadow-sm">
+                <table class="w-full text-center border-collapse">
+                  <thead class="bg-slate-800 dark:bg-slate-700 text-white text-xs font-bold sticky top-0">
+                    <tr>
+                      <th class="p-2.5">التاريخ</th>
+                      <th class="p-2.5 text-right pr-4">البيان / نوع المعاملة</th>
+                      <th class="p-2.5">الاستلام</th>
+                      <th class="p-2.5">المدفوع</th>
+                      <th class="p-2.5">إجراء</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ledgerTableBody" class="text-xs font-medium text-gray-700 dark:text-slate-300">
+                  </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const arabicMonths = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+        let currentFormTab = 'expense';
+        let currentSelectedYear = 2026;
+        let currentFilter = 'all'; // الفلتر النشط الافتراضي لجدول الحركات
+
+        const defaultLedger = [
+            { year: 2026, month: "مايو", date: "2026-05-13", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-16", income: 2000, title: "استلام نقدي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-17", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-19", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" },
+            { year: 2026, month: "مايو", date: "2026-05-25", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" }
+        ];
+
+        let ledger = JSON.parse(localStorage.getItem('home_ledger')) || defaultLedger;
+
+        function populateYears() {
+            const yearSelect = document.getElementById('yearFilter');
+            const savedYear = yearSelect.value || currentSelectedYear;
+            let years = [...new Set(ledger.map(t => t.year))];
+            if (!years.includes(2026)) years.push(2026);
+            years.sort((a, b) => a - b);
+
+            yearSelect.innerHTML = '';
+            years.forEach(y => {
+                const opt = document.createElement('option');
+                opt.value = y; opt.innerText = y;
+                if (y == savedYear) opt.selected = true;
+                yearSelect.appendChild(opt);
+            });
+            currentSelectedYear = yearSelect.value;
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('home_ledger', JSON.stringify(ledger));
+            populateYears();
+            updateDashboard();
+        }
+
+        function saveInputs() {
+            const inputs = {
+                imanBase: document.getElementById('imanBaseSalary').value,
+                imanDays: document.getElementById('imanDays').value,
+                imanRate: document.getElementById('imanRate').value,
+                doaaBase: document.getElementById('doaaBaseSalary').value,
+                doaaDays: document.getElementById('doaaDays').value,
+                doaaRate: document.getElementById('doaaRate').value
+            };
+            localStorage.setItem('payroll_inputs', JSON.stringify(inputs));
+        }
+
+        function loadInputs() {
+            const inputs = JSON.parse(localStorage.getItem('payroll_inputs'));
+            if (inputs) {
+                document.getElementById('imanBaseSalary').value = inputs.imanBase || 3600;
+                document.getElementById('imanDays').value = inputs.imanDays || 0;
+                document.getElementById('imanRate').value = inputs.imanRate || 120;
+                document.getElementById('doaaBaseSalary').value = inputs.doaaBase || 2600;
+                document.getElementById('doaaDays').value = inputs.doaaDays || 0;
+                document.getElementById('doaaRate').value = inputs.doaaRate || 100;
+            }
+        }
+
+        function switchFormTab(tabName) {
+            currentFormTab = tabName;
+            ['expense', 'advance', 'deduct', 'salary'].forEach(t => {
+                document.getElementById('form-' + t).classList.add('hidden');
+                document.getElementById('tab-' + t).className = "px-4 py-2 text-xs font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200";
+            });
+            document.getElementById('form-' + tabName).classList.remove('hidden');
+            let themeClass = tabName === 'expense' ? 'bg-blue-900 text-white' : (tabName === 'advance' ? 'bg-red-600 text-white' : (tabName === 'deduct' ? 'bg-orange-600 text-white' : 'bg-green-700 text-white'));
+            document.getElementById('tab-' + tabName).className = "px-4 py-2 text-xs font-bold rounded-lg shadow-sm " + themeClass;
+        }
+
+        // تشغيل نظام الفلترة الموسع والشامل
+        function setFilter(filterVal) {
+            currentFilter = filterVal;
+            ['all', 'إيمان', 'دعاء', 'only-expense', 'only-income'].forEach(f => {
+                document.getElementById('filterBtn-' + f).className = "px-3 py-1.5 font-bold rounded-lg bg-gray-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200";
+            });
+            
+            let activeBtnClass = "bg-slate-800 text-white";
+            if (filterVal === 'only-expense') activeBtnClass = "bg-red-600 text-white";
+            if (filterVal === 'only-income') activeBtnClass = "bg-green-700 text-white";
+            
+            document.getElementById('filterBtn-' + filterVal).className = "px-3 py-1.5 font-bold rounded-lg shadow-sm " + activeBtnClass;
+            updateDashboard();
+        }
+
+        function getPreviousCarryover(targetYear, targetMonth) {
+            let carryover = 0;
+            let targetMonthIndex = arabicMonths.indexOf(targetMonth);
+            ledger.forEach(t => {
+                let mIdx = arabicMonths.indexOf(t.month);
+                if (t.year < targetYear || (t.year === targetYear && mIdx < targetMonthIndex)) {
+                    carryover += (t.income - t.expense);
+                }
+            });
+            return carryover;
+        }
+
+        let globalImanAdvances = 0, globalDoaaAdvances = 0;
+        let globalImanDeductions = 0, globalDoaaDeductions = 0;
+        let globalImanPaidSalary = 0, globalDoaaPaidSalary = 0;
+
+        function updateDashboard() {
+            currentSelectedYear = parseInt(document.getElementById('yearFilter').value) || 2026;
+            const month = document.getElementById('monthFilter').value;
+            const filteredForTotals = ledger.filter(t => t.year === currentSelectedYear && t.month === month);
+
+            const prevCarry = getPreviousCarryover(currentSelectedYear, month);
+            document.getElementById('prevCarryover').innerText = prevCarry.toLocaleString() + " ج.م";
+
+            let totalIncome = 0;
+            let totalExpense = 0;
+            
+            globalImanAdvances = 0; globalDoaaAdvances = 0;
+            globalImanDeductions = 0; globalDoaaDeductions = 0;
+            globalImanPaidSalary = 0; globalDoaaPaidSalary = 0;
+
+            filteredForTotals.forEach(t => {
+                totalIncome += t.income;
+                totalExpense += t.expense;
+                
+                if (t.isAdvance) {
+                    if (t.staffName === "إيمان") globalImanAdvances += t.expense;
+                    if (t.staffName === "دعاء") globalDoaaAdvances += t.expense;
+                } else if (t.isDeduction) {
+                    if (t.staffName === "إيمان") globalImanDeductions += t.expense;
+                    if (t.staffName === "دعاء") globalDoaaDeductions += t.expense;
+                } else if (t.isSalaryPayment) {
+                    if (t.staffName === "إيمان") globalImanPaidSalary += t.expense;
+                    if (t.staffName === "دعاء") globalDoaaPaidSalary += t.expense;
+                } else {
+                    const title = t.title;
+                    if (title.includes("إيمان") || title.includes("ايمان")) {
+                        if (title.includes("سلف") || title.includes("استلاف")) globalImanAdvances += t.expense;
+                        else if (title.includes("خصم") || title.includes("جزاء")) globalImanDeductions += t.expense;
+                        else if (title.includes("مرتب") || title.includes("سداد")) globalImanPaidSalary += t.expense;
+                    } else if (title.includes("دعاء") || title.includes("دهاء")) {
+                        if (title.includes("سلف") || title.includes("استلاف")) globalDoaaAdvances += t.expense;
+                        else if (title.includes("خصم") || title.includes("جزاء")) globalDoaaDeductions += t.expense;
+                        else if (title.includes("مرتب") || title.includes("سداد")) globalDoaaPaidSalary += t.expense;
+                    }
+                }
+            });
+
+            const netVault = prevCarry + totalIncome - totalExpense;
+
+            document.getElementById('totalIncome').innerText = totalIncome.toLocaleString() + " ج.م";
+            document.getElementById('totalExpense').innerText = totalExpense.toLocaleString() + " ج.م";
+            document.getElementById('netVault').innerText = netVault.toLocaleString() + " ج.م";
+
+            const vaultCard = document.getElementById('vaultCard');
+            const vaultIcon = document.getElementById('vaultIcon');
+            if (netVault >= 0) {
+                vaultCard.className = "p-4 rounded-xl border text-center shadow-sm bg-green-50 border-green-200 text-green-700 dark:bg-green-900/30 dark:border-green-800 dark:text-green-400";
+                vaultIcon.className = "w-9 h-9 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-2 text-green-600 dark:text-green-400";
+            } else {
+                vaultCard.className = "p-4 rounded-xl border text-center shadow-sm bg-red-50 border-red-200 text-red-700 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400";
+                vaultIcon.className = "w-9 h-9 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-2 text-red-600 dark:text-red-400";
+            }
+
+            calculatePayroll();
+
+            // تطبيق الفلاتر الموسعة على جدول السجل
+            let finalFilteredList = filteredForTotals;
+            if (currentFilter === 'only-expense') {
+                finalFilteredList = filteredForTotals.filter(t => t.expense > 0);
+            } else if (currentFilter === 'only-income') {
+                finalFilteredList = filteredForTotals.filter(t => t.income > 0);
+            } else if (currentFilter !== 'all') {
+                finalFilteredList = filteredForTotals.filter(t => 
+                    t.staffName === currentFilter || 
+                    t.title.includes(currentFilter) || 
+                    (currentFilter === "إيمان" && t.title.includes("ايمان")) ||
+                    (currentFilter === "دعاء" && t.title.includes("دهاء"))
+                );
+            }
+
+            const tbody = document.getElementById('ledgerTableBody');
+            tbody.innerHTML = '';
+
+            if (finalFilteredList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-gray-400 italic dark:text-gray-500">لا توجد حركات مسجلة تطابق الفلتر الحالي.</td></tr>`;
+            } else {
+                finalFilteredList.forEach((t) => {
+                    const globalIndex = ledger.indexOf(t);
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/50';
+                    row.innerHTML = `
+                        <td class="p-2.5 text-gray-500 dark:text-gray-400">${t.date || '---'}</td>
+                        <td class="p-2.5 font-bold text-right pr-4 text-slate-700 dark:text-slate-200">${t.title}</td>
+                        <td class="p-2.5 text-green-600 dark:text-green-400 font-bold">${t.income ? t.income.toLocaleString() + ' ج.م' : '-'}</td>
+                        <td class="p-2.5 text-red-600 dark:text-red-400 font-bold">${t.expense ? t.expense.toLocaleString() + ' ج.م' : '-'}</td>
+                        <td class="p-2.5">
+                            <button onclick="deleteTransaction(${globalIndex})" class="text-red-500 hover:text-red-700 p-1 rounded transition" title="حذف الحركة">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+
+        function calculatePayroll() {
+            const imanSalary = Number(document.getElementById('imanBaseSalary').value) || 0;
+            const doaaSalary = Number(document.getElementById('doaaBaseSalary').value) || 0;
+
+            const imanDays = Number(document.getElementById('imanDays').value) || 0;
+            const imanRate = Number(document.getElementById('imanRate').value) || 0;
+            const imanOvertime = imanDays * imanRate;
+            document.getElementById('imanOvertimeTotal').innerText = imanOvertime.toLocaleString() + " ج.م";
+
+            const doaaDays = Number(document.getElementById('doaaDays').value) || 0;
+            const doaaRate = Number(document.getElementById('doaaRate').value) || 0;
+            const doaaOvertime = doaaDays * doaaRate;
+            document.getElementById('doaaOvertimeTotal').innerText = doaaOvertime.toLocaleString() + " ج.م";
+
+            document.getElementById('imanAdvances').innerText = globalImanAdvances.toLocaleString() + " ج.م";
+            document.getElementById('doaaAdvances').innerText = globalDoaaAdvances.toLocaleString() + " ج.م";
+            
+            document.getElementById('imanDeductions').innerText = globalImanDeductions.toLocaleString() + " ج.م";
+            document.getElementById('doaaDeductions').innerText = globalDoaaDeductions.toLocaleString() + " ج.م";
+            
+            document.getElementById('imanPaidSalary').innerText = globalImanPaidSalary.toLocaleString() + " ج.م";
+            document.getElementById('doaaPaidSalary').innerText = globalDoaaPaidSalary.toLocaleString() + " ج.m";
+
+            document.getElementById('imanNet').innerText = (imanSalary + imanOvertime - globalImanAdvances - globalImanDeductions - globalImanPaidSalary).toLocaleString() + " ج.م";
+            document.getElementById('doaaNet').innerText = (doaaSalary + doaaOvertime - globalDoaaAdvances - globalDoaaDeductions - globalDoaaPaidSalary).toLocaleString() + " ج.م";
+        }
+
+        function deleteTransaction(index) {
+            if (confirm("هل أنت متأكد من رغبتك في حذف هذه الحركة بالكامل؟")) {
+                ledger.splice(index, 1);
+                saveAndRefresh();
+            }
+        }
+
+        function addTransaction(e, type) {
+            e.preventDefault();
+            let dateVal, titleVal, incomeVal = 0, expenseVal = 0, isAdv = false, isDed = false, isSalPay = false, staff = "";
+
+            if (type === 'normal') {
+                dateVal = document.getElementById('expDate').value;
+                titleVal = document.getElementById('expTitle').value;
+                incomeVal = Number(document.getElementById('expIncome').value) || 0;
+                expenseVal = Number(document.getElementById('expExpense').value) || 0;
+                document.getElementById('expTitle').value = '';
+                document.getElementById('expIncome').value = '';
+                document.getElementById('expExpense').value = '';
+            } else if (type === 'advance') {
+                dateVal = document.getElementById('advDate').value;
+                staff = document.getElementById('advStaff').value;
+                expenseVal = Number(document.getElementById('advAmount').value) || 0;
+                titleVal = `سلفة صريحة للموظفة: ${staff}`;
+                isAdv = true;
+                document.getElementById('advAmount').value = '';
+                document.getElementById('advStaff').value = '';
+            } else if (type === 'deduct') {
+                dateVal = document.getElementById('dedDate').value;
+                staff = document.getElementById('dedStaff').value;
+                expenseVal = Number(document.getElementById('dedAmount').value) || 0;
+                let reason = document.getElementById('dedReason').value;
+                titleVal = `خصم / جزاء للموظفة: ${staff} (السبب: ${reason})`;
+                isDed = true;
+                document.getElementById('dedAmount').value = '';
+                document.getElementById('dedReason').value = '';
+                document.getElementById('dedStaff').value = '';
+            } else if (type === 'salary') {
+                dateVal = document.getElementById('salDate').value;
+                staff = document.getElementById('salStaff').value;
+                expenseVal = Number(document.getElementById('salAmount').value) || 0;
+                titleVal = `سداد جزء/كامل صافي الراتب لـ ${staff}`;
+                isSalPay = true;
+                document.getElementById('salAmount').value = '';
+                document.getElementById('salStaff').value = '';
+            }
+
+            if (!dateVal || !titleVal) return;
+
+            const dateObj = new Date(dateVal);
+            const year = dateObj.getFullYear();
+            const month = arabicMonths[dateObj.getMonth()];
+
+            ledger.push({
+                year: year,
+                month: month,
+                date: dateVal,
+                income: incomeVal,
+                title: titleVal,
+                expense: expenseVal,
+                isAdvance: isAdv,
+                isDeduction: isDed,
+                isSalaryPayment: isSalPay,
+                staffName: staff
+            });
+
+            currentSelectedYear = year;
+            document.getElementById('monthFilter').value = month;
+
+            saveAndRefresh();
+        }
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.className = "fa-solid fa-moon text-lg";
+            } else {
+                html.classList.add('dark');
+                icon.className = "fa-solid fa-sun text-lg";
+            }
+        }
+
+        window.onload = function() {
+            loadInputs();
+            populateYears();
+            updateDashboard();
+        };
+    </script>
+</body>
+</html>
