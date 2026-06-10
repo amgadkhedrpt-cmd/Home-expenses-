@@ -324,9 +324,12 @@
             const currentMonth = document.getElementById('monthFilter').value;
             const periodKey = `payroll_inputs_${currentYear}_${currentMonth}`;
 
-            // لو اليوزر دخل يكتب أي رقم، بنسجل فوراً لقطة إن الشهر ده مفعل ومستحق للراتب
-            if(Number(document.getElementById('imanBaseSalary').value) > 0 || Number(document.getElementById('doaaBaseSalary').value) > 0) {
-                savePayrollSnapshot('إيمان', currentYear, currentMonth, Number(document.getElementById('imanBaseSalary').value), 0, 0);
+            // إذا تم إدخال راتب، نقوم بتسجيل لقطة في الهيستوري فوراً لمنع التراكم العشوائي
+            if(Number(document.getElementById('imanBaseSalary').value) > 0) {
+                savePayrollSnapshot('إيمان', currentYear, currentMonth, Number(document.getElementById('imanBaseSalary').value), Number(document.getElementById('imanDays').value)*Number(document.getElementById('imanRate').value), Number(document.getElementById('imanAccomDays').value)*Number(document.getElementById('imanAccomRate').value));
+            }
+            if(Number(document.getElementById('doaaBaseSalary').value) > 0) {
+                savePayrollSnapshot('دعاء', currentYear, currentMonth, Number(document.getElementById('doaaBaseSalary').value), Number(document.getElementById('doaaDays').value)*Number(document.getElementById('doaaRate').value), Number(document.getElementById('doaaAccomDays').value)*Number(document.getElementById('doaaAccomRate').value));
             }
 
             const inputs = {
@@ -509,13 +512,11 @@
             }
         }
 
-        // تحديث دالة جلب رصيد شهور سابقة لمنع التراكم الوهمي للشهور الفارغة
         function getStaffPreviousBalance(staffName, targetYear, targetMonth) {
             const targetIdx = arabicMonths.indexOf(targetMonth);
             let paid = 0;
             let due = 0;
 
-            // 1. حساب المبالغ اللى اندفعتلها فعلياً من الخزنة في الشهور اللى فاتت
             ledger.forEach(t => {
                 const mIdx = arabicMonths.indexOf(t.month);
                 const isBefore = t.year < targetYear || (t.year === targetYear && mIdx < targetIdx);
@@ -531,7 +532,6 @@
                 }
             });
 
-            // 2. حساب المستحقات الفعلية من الشهور اللى فاتت اللى اتكتب فيها داتا بس
             const history = JSON.parse(localStorage.getItem('payroll_history')) || {};
             Object.keys(history).forEach(key => {
                 const parts = key.split('_');
@@ -545,7 +545,6 @@
                 const isBefore = sYear < targetYear || (sYear === targetYear && mIdx < targetIdx);
                 if (!isBefore) return;
 
-                // هنا الإضافة الذكية: بنتأكد إن الشهر ده كان فيه حركة سلف/راتب مسجلة أو الموظفة اشتغلت فيه فعلاً (الراتب مش صفر)
                 const rec = history[key];
                 const hasLedgerActivity = ledger.some(t => t.year === sYear && t.month === sMonth && (t.staffName === staffName || t.title.includes(staffName)));
                 
@@ -561,7 +560,6 @@
             const history = JSON.parse(localStorage.getItem('payroll_history')) || {};
             const key = staffName + '_' + year + '_' + month;
             
-            // مش بنعمل حفظ للـ snapshot لو الراتب متصفر تماماً والشهر ملوش لزمة
             if (salary === 0 && overtime === 0 && accom === 0) return;
 
             history[key] = { salary, overtime, accom };
@@ -600,7 +598,6 @@
             document.getElementById('doaaDeductions').innerText = globalDoaaDeductions.toLocaleString() + " ج.م";
             document.getElementById('doaaPaidSalary').innerText = globalDoaaPaidSalary.toLocaleString() + " ج.م";
 
-            // بيسيف السنابح شوت فقط لو فيه أرقام حقيقية دخلت
             if (imanSalary > 0 || imanOvertime > 0 || imanAccom > 0) {
                 savePayrollSnapshot('إيمان', currentYear, currentMonth, imanSalary, imanOvertime, imanAccom);
             }
@@ -772,7 +769,6 @@
             const html = document.documentElement;
             const icon = document.getElementById('themeIcon');
             if (html.classList.contains('dark')) {
-                html.documentElement;
                 html.classList.remove('dark');
                 icon.className = "fa-solid fa-moon text-lg";
             } else {
@@ -781,7 +777,16 @@
             }
         }
 
+        // كود الطوارئ لتنظيف الداتا الفاسدة المخزنة في المتصفح مرة واحدة فور تشغيل الكود
+        function fixStoredDataBug() {
+            if (!localStorage.getItem('payroll_bug_fixed_v2')) {
+                localStorage.removeItem('payroll_history');
+                localStorage.setItem('payroll_bug_fixed_v2', 'true');
+            }
+        }
+
         window.onload = function() {
+            fixStoredDataBug(); // تشغيل التنظيف أول حاجة
             populateYears();
             updateDashboard();
         };
