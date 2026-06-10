@@ -131,9 +131,9 @@
                     <!-- صف إيمان -->
                     <tr class="border-b border-slate-100 dark:border-slate-800/60 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
                       <td class="p-4 font-bold bg-slate-50/80 dark:bg-slate-800/50 text-slate-900 dark:text-white">إيمان</td>
-                      <td class="p-2"><input type="number" id="imanBaseSalary" value="3600" min="0" class="w-24 p-2 text-center font-bold border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2"><input type="number" id="imanBaseSalary" value="0" min="0" class="w-24 p-2 text-center font-bold border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
                       <td class="p-2"><input type="number" id="imanDays" value="0" min="0" class="w-16 p-2 text-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
-                      <td class="p-2"><input type="number" id="imanRate" value="120" min="0" class="w-20 p-2 text-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2"><input type="number" id="imanRate" value="0" min="0" class="w-20 p-2 text-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
                       <td id="imanOvertimeTotal" class="p-4 font-bold text-indigo-600 dark:text-indigo-400">0 ج.م</td>
                       <td class="p-2"><input type="number" id="imanAccomDays" value="0" min="0" class="w-16 p-2 text-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
                       <td class="p-2"><input type="number" id="imanAccomRate" value="0" min="0" class="w-20 p-2 text-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
@@ -147,9 +147,9 @@
                     <!-- صف دعاء -->
                     <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
                       <td class="p-4 font-bold bg-slate-50/80 dark:bg-slate-800/50 text-slate-900 dark:text-white">دعاء</td>
-                      <td class="p-2"><input type="number" id="doaaBaseSalary" value="2600" min="0" class="w-24 p-2 text-center font-bold border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2"><input type="number" id="doaaBaseSalary" value="0" min="0" class="w-24 p-2 text-center font-bold border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
                       <td class="p-2"><input type="number" id="doaaDays" value="0" min="0" class="w-16 p-2 text-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
-                      <td class="p-2"><input type="number" id="doaaRate" value="100" min="0" class="w-20 p-2 text-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
+                      <td class="p-2"><input type="number" id="doaaRate" value="0" min="0" class="w-20 p-2 text-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
                       <td id="doaaOvertimeTotal" class="p-4 font-bold text-indigo-600 dark:text-indigo-400">0 ج.م</td>
                       <td class="p-2"><input type="number" id="doaaAccomDays" value="0" min="0" class="w-16 p-2 text-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
                       <td class="p-2"><input type="number" id="doaaAccomRate" value="0" min="0" class="w-20 p-2 text-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500" oninput="saveInputs(); calculatePayroll()"></td>
@@ -319,7 +319,6 @@
             updateDashboard();
         }
 
-        // تم تعديل حفظ المدخلات لتكون مرتبطة بالسنة والشهر المحددين
         function saveInputs() {
             const currentYear = document.getElementById('yearFilter').value || currentSelectedYear;
             const currentMonth = document.getElementById('monthFilter').value;
@@ -340,7 +339,7 @@
             localStorage.setItem(periodKey, JSON.stringify(inputs));
         }
 
-        // تم تعديل جلب المدخلات لتستدعي بيانات الشهر والسنة الحاليين فقط
+        // تحديث تصفير المدخلات: أي شهر جديد هيبدأ بصفر تماماً في كل الخانات (0)
         function loadInputs() {
             const currentYear = document.getElementById('yearFilter').value || currentSelectedYear;
             const currentMonth = document.getElementById('monthFilter').value;
@@ -348,16 +347,15 @@
 
             const inputs = JSON.parse(localStorage.getItem(periodKey));
             
-            // قيم افتراضية في حال لم يتم إدخال بيانات لهذا الشهر من قبل
-            document.getElementById('imanBaseSalary').value = inputs ? (inputs.imanBase || 3600) : 3600;
+            document.getElementById('imanBaseSalary').value = inputs ? (inputs.imanBase || 0) : 0;
             document.getElementById('imanDays').value = inputs ? (inputs.imanDays || 0) : 0;
-            document.getElementById('imanRate').value = inputs ? (inputs.imanRate || 120) : 120;
+            document.getElementById('imanRate').value = inputs ? (inputs.imanRate || 0) : 0;
             document.getElementById('imanAccomDays').value = inputs ? (inputs.imanAccomDays || 0) : 0;
             document.getElementById('imanAccomRate').value = inputs ? (inputs.imanAccomRate || 0) : 0;
             
-            document.getElementById('doaaBaseSalary').value = inputs ? (inputs.doaaBase || 2600) : 2600;
+            document.getElementById('doaaBaseSalary').value = inputs ? (inputs.doaaBase || 0) : 0;
             document.getElementById('doaaDays').value = inputs ? (inputs.doaaDays || 0) : 0;
-            document.getElementById('doaaRate').value = inputs ? (inputs.doaaRate || 100) : 100;
+            document.getElementById('doaaRate').value = inputs ? (inputs.doaaRate || 0) : 0;
             document.getElementById('doaaAccomDays').value = inputs ? (inputs.doaaAccomDays || 0) : 0;
             document.getElementById('doaaAccomRate').value = inputs ? (inputs.doaaAccomRate || 0) : 0;
         }
@@ -408,7 +406,6 @@
             currentSelectedYear = parseInt(document.getElementById('yearFilter').value) || 2026;
             const month = document.getElementById('monthFilter').value;
             
-            // استدعاء مدخلات الرواتب المناسبة للشهر المحدد بمجرد تغييره
             loadInputs();
 
             const filteredForTotals = ledger.filter(t => t.year === currentSelectedYear && t.month === month);
