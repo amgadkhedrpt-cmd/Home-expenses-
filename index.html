@@ -376,11 +376,14 @@
             updateDashboard();
         }
 
+        // تم التحديث هنا: الحساب بقا بيبص على السنين السابقة بالكامل لترحيل لانهائي صحيح
         function getPreviousCarryover(targetYear, targetMonth) {
             let carryover = 0;
             let targetMonthIndex = arabicMonths.indexOf(targetMonth);
+            
             ledger.forEach(t => {
                 let mIdx = arabicMonths.indexOf(t.month);
+                // شرط الترحيل: لو الحركة في سنة سابقة تماماً، أو في نفس السنة بس في شهر سابق
                 if (t.year < targetYear || (t.year === targetYear && mIdx < targetMonthIndex)) {
                     carryover += (t.income - t.expense);
                 }
@@ -434,7 +437,6 @@
                 }
             });
 
-            // هنا تم تعديل حساب صافي الخزنة ليكون تراكمياً (رصيد سابق + دخل حالي - مصروف حالي)
             const netVault = prevCarry + totalIncome - totalExpense;
 
             document.getElementById('totalIncome').innerText = totalIncome.toLocaleString() + " ج.م";
@@ -565,7 +567,7 @@
             const doaaAccom = doaaAccomDays * doaaAccomRate;
 
             document.getElementById('doaaOvertimeTotal').innerText = doaaOvertime.toLocaleString() + " ج.م";
-            document.getElementById('doaaAccomTotal').innerText = doaaAccom.toLocaleString() + " ج.m";
+            document.getElementById('doaaAccomTotal').innerText = doaaAccom.toLocaleString() + " ج.م";
             document.getElementById('doaaAdvances').innerText = globalDoaaAdvances.toLocaleString() + " ج.م";
             document.getElementById('doaaDeductions').innerText = globalDoaaDeductions.toLocaleString() + " ج.م";
             document.getElementById('doaaPaidSalary').innerText = globalDoaaPaidSalary.toLocaleString() + " ج.م";
@@ -573,19 +575,17 @@
             savePayrollSnapshot('إيمان', currentYear, currentMonth, imanSalary, imanOvertime, imanAccom);
             savePayrollSnapshot('دعاء', currentYear, currentMonth, doaaSalary, doaaOvertime, doaaAccom);
 
-            // جلب الأرصيد السابقة بشكل آلي ودقيق
             const imanPrevBalance = getStaffPreviousBalance('إيمان', currentYear, currentMonth);
             const doaaPrevBalance = getStaffPreviousBalance('دعاء', currentYear, currentMonth);
 
-            // عرض الرصيد السابق في خانة الجدول المخصصة مع تنسيق اللون
             function formatPrevBalanceCell(id, val) {
                 const el = document.getElementById(id);
                 if (val > 0) {
                     el.innerText = "+ " + val.toLocaleString() + " ج.م";
-                    el.className = "p-4 font-bold text-rose-500"; // عليها فلوس (مديونية تضاف للمطلوب منها سداده)
+                    el.className = "p-4 font-bold text-rose-500";
                 } else if (val < 0) {
                     el.innerText = "- " + Math.abs(val).toLocaleString() + " ج.م";
-                    el.className = "p-4 font-bold text-emerald-500"; // ليها فلوس (تخصم من المطلوب)
+                    el.className = "p-4 font-bold text-emerald-500";
                 } else {
                     el.innerText = "0 ج.م";
                     el.className = "p-4 font-bold text-slate-400";
@@ -594,7 +594,6 @@
             formatPrevBalanceCell('imanPrevBalanceRow', imanPrevBalance);
             formatPrevBalanceCell('doaaPrevBalanceRow', doaaPrevBalance);
 
-            // الحسبة النهائية الصافية متضمنة الشهور السابقة
             const imanNetThisMonth = imanSalary + imanOvertime + imanAccom - globalImanAdvances - globalImanDeductions - globalImanPaidSalary;
             const doaaNetThisMonth = doaaSalary + doaaOvertime + doaaAccom - globalDoaaAdvances - globalDoaaDeductions - globalDoaaPaidSalary;
             
