@@ -319,7 +319,12 @@
             updateDashboard();
         }
 
+        // تم تعديل حفظ المدخلات لتكون مرتبطة بالسنة والشهر المحددين
         function saveInputs() {
+            const currentYear = document.getElementById('yearFilter').value || currentSelectedYear;
+            const currentMonth = document.getElementById('monthFilter').value;
+            const periodKey = `payroll_inputs_${currentYear}_${currentMonth}`;
+
             const inputs = {
                 imanBase: document.getElementById('imanBaseSalary').value,
                 imanDays: document.getElementById('imanDays').value,
@@ -332,23 +337,29 @@
                 doaaAccomDays: document.getElementById('doaaAccomDays').value,
                 doaaAccomRate: document.getElementById('doaaAccomRate').value
             };
-            localStorage.setItem('payroll_inputs', JSON.stringify(inputs));
+            localStorage.setItem(periodKey, JSON.stringify(inputs));
         }
 
+        // تم تعديل جلب المدخلات لتستدعي بيانات الشهر والسنة الحاليين فقط
         function loadInputs() {
-            const inputs = JSON.parse(localStorage.getItem('payroll_inputs'));
-            if (inputs) {
-                document.getElementById('imanBaseSalary').value = inputs.imanBase || 3600;
-                document.getElementById('imanDays').value = inputs.imanDays || 0;
-                document.getElementById('imanRate').value = inputs.imanRate || 120;
-                document.getElementById('imanAccomDays').value = inputs.imanAccomDays || 0;
-                document.getElementById('imanAccomRate').value = inputs.imanAccomRate || 0;
-                document.getElementById('doaaBaseSalary').value = inputs.doaaBase || 2600;
-                document.getElementById('doaaDays').value = inputs.doaaDays || 0;
-                document.getElementById('doaaRate').value = inputs.doaaRate || 100;
-                document.getElementById('doaaAccomDays').value = inputs.doaaAccomDays || 0;
-                document.getElementById('doaaAccomRate').value = inputs.doaaAccomRate || 0;
-            }
+            const currentYear = document.getElementById('yearFilter').value || currentSelectedYear;
+            const currentMonth = document.getElementById('monthFilter').value;
+            const periodKey = `payroll_inputs_${currentYear}_${currentMonth}`;
+
+            const inputs = JSON.parse(localStorage.getItem(periodKey));
+            
+            // قيم افتراضية في حال لم يتم إدخال بيانات لهذا الشهر من قبل
+            document.getElementById('imanBaseSalary').value = inputs ? (inputs.imanBase || 3600) : 3600;
+            document.getElementById('imanDays').value = inputs ? (inputs.imanDays || 0) : 0;
+            document.getElementById('imanRate').value = inputs ? (inputs.imanRate || 120) : 120;
+            document.getElementById('imanAccomDays').value = inputs ? (inputs.imanAccomDays || 0) : 0;
+            document.getElementById('imanAccomRate').value = inputs ? (inputs.imanAccomRate || 0) : 0;
+            
+            document.getElementById('doaaBaseSalary').value = inputs ? (inputs.doaaBase || 2600) : 2600;
+            document.getElementById('doaaDays').value = inputs ? (inputs.doaaDays || 0) : 0;
+            document.getElementById('doaaRate').value = inputs ? (inputs.doaaRate || 100) : 100;
+            document.getElementById('doaaAccomDays').value = inputs ? (inputs.doaaAccomDays || 0) : 0;
+            document.getElementById('doaaAccomRate').value = inputs ? (inputs.doaaAccomRate || 0) : 0;
         }
 
         function switchFormTab(tabName) {
@@ -376,14 +387,12 @@
             updateDashboard();
         }
 
-        // تم التحديث هنا: الحساب بقا بيبص على السنين السابقة بالكامل لترحيل لانهائي صحيح
         function getPreviousCarryover(targetYear, targetMonth) {
             let carryover = 0;
             let targetMonthIndex = arabicMonths.indexOf(targetMonth);
             
             ledger.forEach(t => {
                 let mIdx = arabicMonths.indexOf(t.month);
-                // شرط الترحيل: لو الحركة في سنة سابقة تماماً، أو في نفس السنة بس في شهر سابق
                 if (t.year < targetYear || (t.year === targetYear && mIdx < targetMonthIndex)) {
                     carryover += (t.income - t.expense);
                 }
@@ -398,6 +407,10 @@
         function updateDashboard() {
             currentSelectedYear = parseInt(document.getElementById('yearFilter').value) || 2026;
             const month = document.getElementById('monthFilter').value;
+            
+            // استدعاء مدخلات الرواتب المناسبة للشهر المحدد بمجرد تغييره
+            loadInputs();
+
             const filteredForTotals = ledger.filter(t => t.year === currentSelectedYear && t.month === month);
 
             const prevCarry = getPreviousCarryover(currentSelectedYear, month);
@@ -748,7 +761,6 @@
         }
 
         window.onload = function() {
-            loadInputs();
             populateYears();
             updateDashboard();
         };
