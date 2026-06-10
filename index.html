@@ -324,6 +324,11 @@
             const currentMonth = document.getElementById('monthFilter').value;
             const periodKey = `payroll_inputs_${currentYear}_${currentMonth}`;
 
+            // لو اليوزر دخل يكتب أي رقم، بنسجل فوراً لقطة إن الشهر ده مفعل ومستحق للراتب
+            if(Number(document.getElementById('imanBaseSalary').value) > 0 || Number(document.getElementById('doaaBaseSalary').value) > 0) {
+                savePayrollSnapshot('إيمان', currentYear, currentMonth, Number(document.getElementById('imanBaseSalary').value), 0, 0);
+            }
+
             const inputs = {
                 imanBase: document.getElementById('imanBaseSalary').value,
                 imanDays: document.getElementById('imanDays').value,
@@ -339,7 +344,6 @@
             localStorage.setItem(periodKey, JSON.stringify(inputs));
         }
 
-        // تحديث تصفير المدخلات: أي شهر جديد هيبدأ بصفر تماماً في كل الخانات (0)
         function loadInputs() {
             const currentYear = document.getElementById('yearFilter').value || currentSelectedYear;
             const currentMonth = document.getElementById('monthFilter').value;
@@ -505,11 +509,13 @@
             }
         }
 
+        // تحديث دالة جلب رصيد شهور سابقة لمنع التراكم الوهمي للشهور الفارغة
         function getStaffPreviousBalance(staffName, targetYear, targetMonth) {
             const targetIdx = arabicMonths.indexOf(targetMonth);
             let paid = 0;
             let due = 0;
 
+            // 1. حساب المبالغ اللى اندفعتلها فعلياً من الخزنة في الشهور اللى فاتت
             ledger.forEach(t => {
                 const mIdx = arabicMonths.indexOf(t.month);
                 const isBefore = t.year < targetYear || (t.year === targetYear && mIdx < targetIdx);
@@ -525,6 +531,7 @@
                 }
             });
 
+            // 2. حساب المستحقات الفعلية من الشهور اللى فاتت اللى اتكتب فيها داتا بس
             const history = JSON.parse(localStorage.getItem('payroll_history')) || {};
             Object.keys(history).forEach(key => {
                 const parts = key.split('_');
@@ -533,11 +540,18 @@
                 const sYear = parseInt(parts[1]);
                 const sMonth = parts[2];
                 if (sName !== staffName) return;
+                
                 const mIdx = arabicMonths.indexOf(sMonth);
                 const isBefore = sYear < targetYear || (sYear === targetYear && mIdx < targetIdx);
                 if (!isBefore) return;
+
+                // هنا الإضافة الذكية: بنتأكد إن الشهر ده كان فيه حركة سلف/راتب مسجلة أو الموظفة اشتغلت فيه فعلاً (الراتب مش صفر)
                 const rec = history[key];
-                due += (rec.salary || 0) + (rec.overtime || 0) + (rec.accom || 0);
+                const hasLedgerActivity = ledger.some(t => t.year === sYear && t.month === sMonth && (t.staffName === staffName || t.title.includes(staffName)));
+                
+                if ((rec.salary > 0 || rec.overtime > 0 || rec.accom > 0) || hasLedgerActivity) {
+                    due += (rec.salary || 0) + (rec.overtime || 0) + (rec.accom || 0);
+                }
             });
 
             return due - paid;
@@ -546,6 +560,10 @@
         function savePayrollSnapshot(staffName, year, month, salary, overtime, accom) {
             const history = JSON.parse(localStorage.getItem('payroll_history')) || {};
             const key = staffName + '_' + year + '_' + month;
+            
+            // مش بنعمل حفظ للـ snapshot لو الراتب متصفر تماماً والشهر ملوش لزمة
+            if (salary === 0 && overtime === 0 && accom === 0) return;
+
             history[key] = { salary, overtime, accom };
             localStorage.setItem('payroll_history', JSON.stringify(history));
         }
@@ -582,8 +600,13 @@
             document.getElementById('doaaDeductions').innerText = globalDoaaDeductions.toLocaleString() + " ج.م";
             document.getElementById('doaaPaidSalary').innerText = globalDoaaPaidSalary.toLocaleString() + " ج.م";
 
-            savePayrollSnapshot('إيمان', currentYear, currentMonth, imanSalary, imanOvertime, imanAccom);
-            savePayrollSnapshot('دعاء', currentYear, currentMonth, doaaSalary, doaaOvertime, doaaAccom);
+            // بيسيف السنابح شوت فقط لو فيه أرقام حقيقية دخلت
+            if (imanSalary > 0 || imanOvertime > 0 || imanAccom > 0) {
+                savePayrollSnapshot('إيمان', currentYear, currentMonth, imanSalary, imanOvertime, imanAccom);
+            }
+            if (doaaSalary > 0 || doaaOvertime > 0 || doaaAccom > 0) {
+                savePayrollSnapshot('دعاء', currentYear, currentMonth, doaaSalary, doaaOvertime, doaaAccom);
+            }
 
             const imanPrevBalance = getStaffPreviousBalance('إيمان', currentYear, currentMonth);
             const doaaPrevBalance = getStaffPreviousBalance('دعاء', currentYear, currentMonth);
@@ -749,6 +772,7 @@
             const html = document.documentElement;
             const icon = document.getElementById('themeIcon');
             if (html.classList.contains('dark')) {
+                html.documentElement;
                 html.classList.remove('dark');
                 icon.className = "fa-solid fa-moon text-lg";
             } else {
