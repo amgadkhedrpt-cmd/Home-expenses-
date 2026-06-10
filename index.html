@@ -179,16 +179,16 @@
                 <button onclick="switchFormTab('salary')" id="tab-salary" class="px-4 py-2.5 text-xs font-bold rounded-xl bg-white text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 transition">🤝 سداد راتب صافي</button>
             </div>
 
-            <!-- نموذج المصاريف -->
+            <!-- نموذج المصاريف (تم تلوين خانات الاستلام بالأخضر والمصروف بالأحمر) -->
             <form id="form-expense" onsubmit="addTransaction(event, 'normal')" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3.5">
                 <input type="date" id="expDate" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500" required>
                 <input type="text" id="expTitle" placeholder="البند (مثال: طلبات سوق / كهرباء)" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 md:col-span-2 focus:ring-2 focus:ring-indigo-500" required>
-                <input type="number" id="expIncome" placeholder="مبلغ استلام للخزنة" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500" min="0">
-                <input type="number" id="expExpense" placeholder="مبلغ مصروف" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500" min="0">
+                <input type="number" id="expIncome" placeholder="مبلغ استلام للخزنة" class="p-2.5 border border-emerald-300 dark:border-emerald-800 rounded-xl text-sm bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-300 font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" min="0">
+                <input type="number" id="expExpense" placeholder="مبلغ مصروف" class="p-2.5 border border-rose-300 dark:border-rose-800 rounded-xl text-sm bg-rose-50/50 dark:bg-rose-950/20 text-rose-800 dark:text-rose-300 font-bold focus:ring-2 focus:ring-rose-500 focus:border-rose-500" min="0">
                 <button type="submit" class="p-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-sm font-bold md:col-span-5 shadow-md transition duration-200 active:scale-[0.99]">حفظ المعاملة</button>
             </form>
 
-            <!-- نموذج السلف -->
+            <!-- نموذج السلف (تلوين أحمر لإن السلفة خروج وصرف فلوس) -->
             <form id="form-advance" onsubmit="addTransaction(event, 'advance')" class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 hidden">
                 <input type="date" id="advDate" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 focus:ring-2 focus:ring-rose-500" required>
                 <select id="advStaff" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 font-bold focus:ring-2 focus:ring-rose-500" required>
@@ -196,11 +196,11 @@
                     <option value="إيمان">إيمان</option>
                     <option value="دعاء">دعاء</option>
                 </select>
-                <input type="number" id="advAmount" placeholder="مبلغ السلفة المدفوع" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 focus:ring-2 focus:ring-rose-500" min="1" required>
+                <input type="number" id="advAmount" placeholder="مبلغ السلفة المدفوع" class="p-2.5 border border-rose-300 dark:border-rose-800 rounded-xl text-sm bg-rose-50/50 dark:bg-rose-950/20 text-rose-800 dark:text-rose-300 font-bold focus:ring-2 focus:ring-rose-500 focus:border-rose-500" min="1" required>
                 <button type="submit" class="p-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-bold sm:col-span-3 shadow-md transition duration-200 active:scale-[0.99]">حفظ السلفة المستقطعة</button>
             </form>
 
-            <!-- نموذج الخصومات / الجزاءات -->
+            <!-- نموذج الخصومات / الجزاءات (تلوين أحمر) -->
             <form id="form-deduct" onsubmit="addTransaction(event, 'deduct')" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5 hidden">
                 <input type="date" id="dedDate" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 focus:ring-2 focus:ring-amber-500" required>
                 <select id="dedStaff" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 font-bold focus:ring-2 focus:ring-amber-500" required>
@@ -208,12 +208,12 @@
                     <option value="إيمان">إيمان</option>
                     <option value="دعاء">دعاء</option>
                 </select>
-                <input type="number" id="dedAmount" placeholder="مبلغ الخصم / الجزاء" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 focus:ring-2 focus:ring-amber-500" min="1" required>
+                <input type="number" id="dedAmount" placeholder="مبلغ الخصم / الجزاء" class="p-2.5 border border-rose-300 dark:border-rose-800 rounded-xl text-sm bg-rose-50/50 dark:bg-rose-950/20 text-rose-800 dark:text-rose-300 font-bold focus:ring-2 focus:ring-rose-500 focus:border-rose-500" min="1" required>
                 <input type="text" id="dedReason" placeholder="سبب الجزاء (مثال: تأخير ساعة / غياب)" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 focus:ring-2 focus:ring-amber-500" required>
                 <button type="submit" class="p-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-bold md:col-span-4 shadow-md transition duration-200 active:scale-[0.99]">تطبيق الخصم المستقطع</button>
             </form>
 
-            <!-- نموذج سداد الرواتب -->
+            <!-- نموذج سداد الرواتب (تلوين أحمر لإن السداد خروج وصرف من الخزنة) -->
             <form id="form-salary" onsubmit="addTransaction(event, 'salary')" class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 hidden">
                 <input type="date" id="salDate" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500" required>
                 <select id="salStaff" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 font-bold focus:ring-2 focus:ring-emerald-500" required>
@@ -221,7 +221,7 @@
                     <option value="إيمان">إيمان</option>
                     <option value="دعاء">دعاء</option>
                 </select>
-                <input type="number" id="salAmount" placeholder="المبلغ الصافي المدفوع كـ راتب" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500" min="1" required>
+                <input type="number" id="salAmount" placeholder="المبلغ الصافي المدفوع كـ راتب" class="p-2.5 border border-rose-300 dark:border-rose-800 rounded-xl text-sm bg-rose-50/50 dark:bg-rose-950/20 text-rose-800 dark:text-rose-300 font-bold focus:ring-2 focus:ring-rose-500 focus:border-rose-500" min="1" required>
                 <button type="submit" class="p-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold sm:col-span-3 shadow-md transition duration-200 active:scale-[0.99]">حفظ وإثبات سداد الراتب من الخزنة</button>
             </form>
         </div>
@@ -324,7 +324,6 @@
             const currentMonth = document.getElementById('monthFilter').value;
             const periodKey = `payroll_inputs_${currentYear}_${currentMonth}`;
 
-            // إذا تم إدخال راتب، نقوم بتسجيل لقطة في الهيستوري فوراً لمنع التراكم العشوائي
             if(Number(document.getElementById('imanBaseSalary').value) > 0) {
                 savePayrollSnapshot('إيمان', currentYear, currentMonth, Number(document.getElementById('imanBaseSalary').value), Number(document.getElementById('imanDays').value)*Number(document.getElementById('imanRate').value), Number(document.getElementById('imanAccomDays').value)*Number(document.getElementById('imanAccomRate').value));
             }
@@ -777,7 +776,6 @@
             }
         }
 
-        // كود الطوارئ لتنظيف الداتا الفاسدة المخزنة في المتصفح مرة واحدة فور تشغيل الكود
         function fixStoredDataBug() {
             if (!localStorage.getItem('payroll_bug_fixed_v2')) {
                 localStorage.removeItem('payroll_history');
@@ -786,7 +784,7 @@
         }
 
         window.onload = function() {
-            fixStoredDataBug(); // تشغيل التنظيف أول حاجة
+            fixStoredDataBug();
             populateYears();
             updateDashboard();
         };
