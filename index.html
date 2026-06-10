@@ -15,7 +15,6 @@
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
     </style>
     <script>
-        // تهيئة Tailwind بعد تحميله
         window.addEventListener('load', function() {
             if (window.tailwind) {
                 tailwind.config = { darkMode: 'class' };
@@ -27,12 +26,12 @@
 
     <div class="max-w-6xl mx-auto bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none p-5 md:p-8 relative border border-slate-100 dark:border-slate-800/80">
         
-        <!-- زرار الـ Dark Mode المطور -->
+        <!-- زرار الـ Dark Mode -->
         <button onclick="toggleDarkMode()" class="absolute left-4 top-4 md:left-8 md:top-8 w-11 h-11 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-amber-400 rounded-2xl flex items-center justify-center shadow-sm transition-all duration-300 active:scale-95">
             <i id="themeIcon" class="fa-solid fa-moon text-xl"></i>
         </button>
 
-        <!-- العنوان الرئيسي المنسق -->
+        <!-- العنوان الرئيسي -->
         <div class="text-center mb-10 mt-4 md:mt-2">
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 mb-4 shadow-inner">
                 <i class="fa-solid fa-chart-pie text-2xl"></i>
@@ -50,7 +49,6 @@
             <div>
                 <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 mr-1">اختر السنة:</label>
                 <select id="yearFilter" class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm" onchange="updateDashboard()">
-                    <!-- السنين بتنزل هنا لوحدها ديناميكياً -->
                 </select>
             </div>
             <div>
@@ -111,7 +109,7 @@
                 تصفية الرواتب وحساب العمل الإضافي والجزاءات المستقطعة
             </h2>
             <div class="overflow-x-auto border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm bg-white dark:bg-slate-900">
-                <table class="w-full text-center border-collapse min-w-[900px]">
+                <table class="w-full text-center border-collapse min-w-[1000px]">
                   <thead>
                     <tr class="bg-slate-800 dark:bg-slate-800 text-slate-100 font-bold text-xs md:text-sm border-b border-slate-700">
                       <th class="p-4 rounded-tr-2xl">اسم الموظفة</th>
@@ -125,6 +123,7 @@
                       <th class="p-4">سلف الشهر</th>
                       <th class="p-4">جزاءات / خصم</th>
                       <th class="p-4">المدفوع كـ راتب</th>
+                      <th class="p-4 text-blue-500 dark:text-blue-400">رصيد شهور سابقة</th>
                       <th class="p-4 rounded-tl-2xl">صافي المطلوب</th>
                     </tr>
                   </thead>
@@ -142,6 +141,7 @@
                       <td id="imanAdvances" class="p-4 text-rose-600 dark:text-rose-400 font-bold">0 ج.م</td>
                       <td id="imanDeductions" class="p-4 text-amber-600 dark:text-amber-400 font-bold">0 ج.م</td>
                       <td id="imanPaidSalary" class="p-4 text-cyan-600 dark:text-cyan-400 font-bold">0 ج.م</td>
+                      <td id="imanPrevBalanceRow" class="p-4 font-bold text-slate-500">0 ج.م</td>
                       <td id="imanNet" class="p-4 bg-amber-50/40 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 font-bold cursor-pointer hover:bg-amber-100/60 dark:hover:bg-amber-900/30 transition shadow-inner" onclick="showNetDetails('إيمان')" title="اضغط لعرض التفاصيل">0 ج.م</td>
                     </tr>
                     <!-- صف دعاء -->
@@ -157,6 +157,7 @@
                       <td id="doaaAdvances" class="p-4 text-rose-600 dark:text-rose-400 font-bold">0 ج.م</td>
                       <td id="doaaDeductions" class="p-4 text-amber-600 dark:text-amber-400 font-bold">0 ج.م</td>
                       <td id="doaaPaidSalary" class="p-4 text-cyan-600 dark:text-cyan-400 font-bold">0 ج.م</td>
+                      <td id="doaaPrevBalanceRow" class="p-4 font-bold text-slate-500">0 ج.م</td>
                       <td id="doaaNet" class="p-4 bg-amber-50/40 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 font-bold cursor-pointer hover:bg-amber-100/60 dark:hover:bg-amber-900/30 transition shadow-inner" onclick="showNetDetails('دعاء')" title="اضغط لعرض التفاصيل">0 ج.م</td>
                     </tr>
                   </tbody>
@@ -199,7 +200,7 @@
                 <button type="submit" class="p-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-bold sm:col-span-3 shadow-md transition duration-200 active:scale-[0.99]">حفظ السلفة المستقطعة</button>
             </form>
 
-            <!-- نموذج الخصومات / الجزاءات مع خانة السبب الجديدة -->
+            <!-- نموذج الخصومات / الجزاءات -->
             <form id="form-deduct" onsubmit="addTransaction(event, 'deduct')" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5 hidden">
                 <input type="date" id="dedDate" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 focus:ring-2 focus:ring-amber-500" required>
                 <select id="dedStaff" class="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 font-bold focus:ring-2 focus:ring-amber-500" required>
@@ -225,7 +226,7 @@
             </form>
         </div>
 
-        <!-- أزرار الفلترة المخصصة المحدثة -->
+        <!-- أزرار الفلترة المخصصة -->
         <div class="mb-4 flex flex-wrap gap-2 items-center bg-slate-50 dark:bg-slate-800/40 p-3 rounded-2xl border border-slate-100 dark:border-slate-800 text-xs">
             <span class="font-bold text-slate-400 dark:text-slate-500 px-1"><i class="fa-solid fa-filter"></i> فلاتر تصفية السجل المتقدمة:</span>
             <button onclick="setFilter('all')" id="filterBtn-all" class="px-3 py-2 font-bold rounded-xl bg-slate-800 text-white transition shadow-sm">عرض كل الحركات</button>
@@ -283,7 +284,7 @@
         const arabicMonths = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
         let currentFormTab = 'expense';
         let currentSelectedYear = 2026;
-        let currentFilter = 'all'; // الفلتر النشط الافتراضي لجدول الحركات
+        let currentFilter = 'all';
 
         const defaultLedger = [
             { year: 2026, month: "مايو", date: "2026-05-13", income: 3000, title: "استلام نقدي", expense: 0, isAdvance: false, isDeduction: false, isSalaryPayment: false, staffName: "" },
@@ -361,7 +362,6 @@
             document.getElementById('tab-' + tabName).className = "px-4 py-2.5 text-xs font-bold rounded-xl transition " + themeClass;
         }
 
-        // تشغيل نظام الفلترة الموسع والشامل
         function setFilter(filterVal) {
             currentFilter = filterVal;
             ['all', 'إيمان', 'دعاء', 'only-expense', 'only-income'].forEach(f => {
@@ -434,6 +434,7 @@
                 }
             });
 
+            // هنا تم تعديل حساب صافي الخزنة ليكون تراكمياً (رصيد سابق + دخل حالي - مصروف حالي)
             const netVault = prevCarry + totalIncome - totalExpense;
 
             document.getElementById('totalIncome').innerText = totalIncome.toLocaleString() + " ج.م";
@@ -452,7 +453,6 @@
 
             calculatePayroll();
 
-            // تطبيق الفلاتر الموسعة على جدول السجل
             let finalFilteredList = filteredForTotals;
             if (currentFilter === 'only-expense') {
                 finalFilteredList = filteredForTotals.filter(t => t.expense > 0);
@@ -565,7 +565,7 @@
             const doaaAccom = doaaAccomDays * doaaAccomRate;
 
             document.getElementById('doaaOvertimeTotal').innerText = doaaOvertime.toLocaleString() + " ج.م";
-            document.getElementById('doaaAccomTotal').innerText = doaaAccom.toLocaleString() + " ج.م";
+            document.getElementById('doaaAccomTotal').innerText = doaaAccom.toLocaleString() + " ج.m";
             document.getElementById('doaaAdvances').innerText = globalDoaaAdvances.toLocaleString() + " ج.م";
             document.getElementById('doaaDeductions').innerText = globalDoaaDeductions.toLocaleString() + " ج.م";
             document.getElementById('doaaPaidSalary').innerText = globalDoaaPaidSalary.toLocaleString() + " ج.م";
@@ -573,11 +573,31 @@
             savePayrollSnapshot('إيمان', currentYear, currentMonth, imanSalary, imanOvertime, imanAccom);
             savePayrollSnapshot('دعاء', currentYear, currentMonth, doaaSalary, doaaOvertime, doaaAccom);
 
+            // جلب الأرصيد السابقة بشكل آلي ودقيق
             const imanPrevBalance = getStaffPreviousBalance('إيمان', currentYear, currentMonth);
             const doaaPrevBalance = getStaffPreviousBalance('دعاء', currentYear, currentMonth);
 
+            // عرض الرصيد السابق في خانة الجدول المخصصة مع تنسيق اللون
+            function formatPrevBalanceCell(id, val) {
+                const el = document.getElementById(id);
+                if (val > 0) {
+                    el.innerText = "+ " + val.toLocaleString() + " ج.م";
+                    el.className = "p-4 font-bold text-rose-500"; // عليها فلوس (مديونية تضاف للمطلوب منها سداده)
+                } else if (val < 0) {
+                    el.innerText = "- " + Math.abs(val).toLocaleString() + " ج.م";
+                    el.className = "p-4 font-bold text-emerald-500"; // ليها فلوس (تخصم من المطلوب)
+                } else {
+                    el.innerText = "0 ج.م";
+                    el.className = "p-4 font-bold text-slate-400";
+                }
+            }
+            formatPrevBalanceCell('imanPrevBalanceRow', imanPrevBalance);
+            formatPrevBalanceCell('doaaPrevBalanceRow', doaaPrevBalance);
+
+            // الحسبة النهائية الصافية متضمنة الشهور السابقة
             const imanNetThisMonth = imanSalary + imanOvertime + imanAccom - globalImanAdvances - globalImanDeductions - globalImanPaidSalary;
             const doaaNetThisMonth = doaaSalary + doaaOvertime + doaaAccom - globalDoaaAdvances - globalDoaaDeductions - globalDoaaPaidSalary;
+            
             const imanNetTotal = imanNetThisMonth + imanPrevBalance;
             const doaaNetTotal = doaaNetThisMonth + doaaPrevBalance;
 
@@ -626,9 +646,9 @@
             if (d.prevBalance !== 0) {
                 html += '<p class="text-xs font-bold text-slate-400 uppercase mt-4 mb-2 tracking-wide">📋 رصيد شهور سابقة</p>';
                 if (d.prevBalance > 0) {
-                    html += row('مديونية متراكمة من شهور سابقة', d.prevBalance, 'text-rose-500', 'fa-calendar-xmark');
+                    html += row('مديونية متراكمة (عليها فلوس)', d.prevBalance, 'text-rose-500', 'fa-calendar-xmark');
                 } else {
-                    html += row('رصيد دائن من شهور سابقة', d.prevBalance, 'text-emerald-600 dark:text-emerald-400', 'fa-calendar-check');
+                    html += row('رصيد دائن (ليها فلوس من قبل)', d.prevBalance, 'text-emerald-600 dark:text-emerald-400', 'fa-calendar-check');
                 }
             }
 
